@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+
+// 폰트 설정
+const pretendard = localFont({
+  src: '../../public/fonts/PretendardVariable.woff2',
+  display: 'swap',
+  weight: '45 920',
+  variable: '--font-pretendard',
+})
+
+const nanumsquareneo = localFont({
+  src: '../../public/fonts/NanumSquareNeo-Variable.woff2',
+  variable: '--font-nanumsquareneo',
+})
 
 export const metadata: Metadata = {
   title: '인천과학고등학교 동문수첩',
@@ -21,15 +34,6 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest'
 }
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export default function RootLayout({
   children,
@@ -39,8 +43,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+        className={`${pretendard.variable} ${nanumsquareneo.variable} antialiased`}
+        >
         {children}
       </body>
     </html>
