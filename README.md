@@ -1,3 +1,17 @@
+## AlumConnect
+The official mobile application for Incheon Science High School alumni network. AlumConnect enables graduates to stay connected, share opportunities, and build meaningful relationships within the Incheon Science High School community.
+
+## Features
+
+Alumni directory and networking
+Event announcements and registration
+Mentorship opportunities
+Career resources and job postings
+News updates from the school and alumni community
+
+## About
+Developed by and for Incheon Science High School alumni to strengthen our community bonds and foster collaboration among graduates across different generations.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
