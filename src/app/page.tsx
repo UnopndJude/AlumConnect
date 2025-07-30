@@ -19,6 +19,12 @@ export default async function Home() {
                   <span className="text-sm text-gray-600">
                     안녕하세요, {user.name}님 ({user.graduationClass}기)
                   </span>
+                  <Link
+                    href="/introductions"
+                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  >
+                    동문 자기소개
+                  </Link>
                   {user.isAdmin && (
                     <Link
                       href="/admin"
