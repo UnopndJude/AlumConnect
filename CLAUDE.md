@@ -48,9 +48,61 @@ pnpm test:coverage         # Generate test coverage report
 
 ## Testing
 
-- Test files in `__test__/` directory
+### Test Structure
+- Test files in `__test__/` directory, mirroring the `src/` structure
 - Custom setup with accessibility testing support in `vitest.setup.ts`
 - Use React Testing Library patterns for component testing
+
+### Testing Guidelines
+
+**IMPORTANT: Always write tests when adding new features or components.**
+
+#### 1. Library Functions (`__test__/lib/`)
+- Test all database operations and business logic
+- Mock external dependencies
+- Test both success and error cases
+- Example: `__test__/lib/database.test.ts`, `__test__/lib/introductions.test.ts`
+
+#### 2. React Components (`__test__/components/`)
+- Test user interactions and form submissions
+- Mock async functions with `vi.fn()`
+- Test accessibility and form validation
+- Use `userEvent` for realistic user interactions
+- Example: `__test__/components/auth/RegisterForm.test.tsx`
+
+#### 3. API Routes (`__test__/api/`)
+- Mock Next.js cookies and database functions
+- Test authentication and authorization
+- Test request validation and error handling
+- Use `NextRequest` for request mocking
+- Example: `__test__/api/auth/register.test.ts`
+
+#### 4. Test Patterns
+```typescript
+// Component testing pattern
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+// API testing pattern
+import { vi } from 'vitest'
+vi.mock('@/lib/database')
+
+// Always test edge cases
+- Empty inputs, invalid data
+- User not logged in, not authorized
+- Server errors and network failures
+```
+
+#### 5. When Adding New Features
+**MANDATORY**: Create corresponding test files for:
+- New database functions → `__test__/lib/[filename].test.ts`
+- New components → `__test__/components/[path]/[component].test.tsx`
+- New API routes → `__test__/api/[route]/[method].test.ts`
+
+#### 6. Test Coverage
+- Aim for high test coverage on critical business logic
+- Run `pnpm test:coverage` to check coverage reports
+- Focus on testing user flows and edge cases
 
 ## Notes
 
