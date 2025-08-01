@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPendingUsers, getUserById } from '@/lib/database'
+import { getPendingUsers, getUserById, getAllUsers } from '@/lib/database'
 import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
@@ -23,6 +23,11 @@ export async function GET(request: NextRequest) {
     }
 
     const pendingUsers = getPendingUsers()
+    const allUsers = getAllUsers()
+    console.log('All users:', allUsers.length)
+    console.log('Pending users:', pendingUsers.length)
+    console.log('Users:', allUsers.map(u => ({ email: u.email, status: u.status })))
+    
     const sanitizedUsers = pendingUsers.map(user => ({
       id: user.id,
       email: user.email,
