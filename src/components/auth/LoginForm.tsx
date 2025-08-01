@@ -54,12 +54,15 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">로그인</h2>
+    <div>
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-slate-800 mb-3">로그인</h2>
+        <p className="text-slate-600 text-lg">계정 정보를 입력해주세요</p>
+      </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-base font-semibold text-slate-700 mb-3">
             이메일
           </label>
           <input
@@ -68,12 +71,13 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="이메일을 입력하세요"
+            className="input"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="block text-base font-semibold text-slate-700 mb-3">
             비밀번호
           </label>
           <input
@@ -82,26 +86,39 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="비밀번호를 입력하세요"
+            className="input"
           />
         </div>
 
         {message && (
-          <div className={`p-3 rounded-md ${
+          <div className={`p-4 rounded-xl font-medium ${
             message.type === 'success' 
               ? 'bg-green-50 text-green-800 border border-green-200' 
               : 'bg-red-50 text-red-800 border border-red-200'
           }`}>
-            {message.text}
+            <div className="flex items-center">
+              <span className="mr-3 text-lg">
+                {message.type === 'success' ? '✅' : '❌'}
+              </span>
+              {message.text}
+            </div>
           </div>
         )}
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn btn-primary w-full text-base py-4"
         >
-          {isLoading ? '로그인 중...' : '로그인'}
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+              로그인 중...
+            </div>
+          ) : (
+            '로그인하기'
+          )}
         </button>
       </form>
     </div>

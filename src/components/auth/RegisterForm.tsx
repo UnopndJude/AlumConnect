@@ -58,12 +58,15 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">회원가입</h2>
+    <div>
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-slate-800 mb-3">회원가입</h2>
+        <p className="text-slate-600 text-lg">동문 커뮤니티에 가입하세요</p>
+      </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="block text-base font-semibold text-slate-700 mb-3">
             이름
           </label>
           <input
@@ -72,12 +75,13 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="실명을 입력하세요"
+            className="input"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-base font-semibold text-slate-700 mb-3">
             이메일
           </label>
           <input
@@ -86,12 +90,13 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="이메일을 입력하세요"
+            className="input"
           />
         </div>
 
         <div>
-          <label htmlFor="graduationClass" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="graduationClass" className="block text-base font-semibold text-slate-700 mb-3">
             졸업 기수
           </label>
           <input
@@ -102,64 +107,91 @@ export default function RegisterForm({ onSubmit }: RegisterFormProps) {
             value={formData.graduationClass}
             onChange={(e) => setFormData({ ...formData, graduationClass: parseInt(e.target.value) || 1 })}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="몇 기인지 숫자로 입력해주세요"
+            className="input"
+            placeholder="몇 기인지 숫자로 입력하세요"
           />
-          <p className="text-xs text-gray-500 mt-1">인천과학고등학교 졸업 기수를 입력해주세요</p>
+          <p className="text-sm text-slate-500 mt-3 flex items-center">
+            <span className="mr-2">ℹ️</span>
+            인천과학고등학교 졸업 기수를 입력해주세요
+          </p>
         </div>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            비밀번호
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            required
-            minLength={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="password" className="block text-base font-semibold text-slate-700 mb-3">
+              비밀번호
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              required
+              minLength={6}
+              placeholder="6자 이상"
+              className="input"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-            비밀번호 확인
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            minLength={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <div>
+            <label htmlFor="confirmPassword" className="block text-base font-semibold text-slate-700 mb-3">
+              비밀번호 확인
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={6}
+              placeholder="비밀번호 재입력"
+              className="input"
+            />
+          </div>
         </div>
 
         {message && (
-          <div className={`p-3 rounded-md ${
+          <div className={`p-4 rounded-xl font-medium ${
             message.type === 'success' 
               ? 'bg-green-50 text-green-800 border border-green-200' 
               : 'bg-red-50 text-red-800 border border-red-200'
           }`}>
-            {message.text}
+            <div className="flex items-center">
+              <span className="mr-3 text-lg">
+                {message.type === 'success' ? '✅' : '❌'}
+              </span>
+              {message.text}
+            </div>
           </div>
         )}
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn btn-primary w-full text-base py-4"
         >
-          {isLoading ? '처리 중...' : '회원가입'}
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+              처리 중...
+            </div>
+          ) : (
+            '회원가입하기'
+          )}
         </button>
       </form>
 
-      <p className="text-sm text-gray-600 text-center mt-4">
-        회원가입 후 관리자의 승인을 기다려주세요.
-      </p>
+      <div className="mt-8 p-6 bg-blue-50 rounded-xl border border-blue-200">
+        <div className="flex items-start text-blue-800">
+          <span className="mr-4 text-2xl">💡</span>
+          <div>
+            <p className="font-semibold text-lg mb-2">회원가입 승인 안내</p>
+            <p className="leading-relaxed">
+              회원가입 후 관리자의 승인을 기다려주세요. 승인 완료까지 1-2일 정도 소요될 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

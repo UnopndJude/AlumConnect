@@ -23,10 +23,6 @@ export async function GET(request: NextRequest) {
     }
 
     const pendingUsers = getPendingUsers()
-    const allUsers = getAllUsers()
-    console.log('All users:', allUsers.length)
-    console.log('Pending users:', pendingUsers.length)
-    console.log('Users:', allUsers.map(u => ({ email: u.email, status: u.status })))
     
     const sanitizedUsers = pendingUsers.map(user => ({
       id: user.id,
