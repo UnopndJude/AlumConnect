@@ -4,7 +4,17 @@ import { useState } from 'react'
 import { LoginCredentials } from '@/types/user'
 
 interface LoginFormProps {
-  onSubmit: (data: LoginCredentials) => Promise<{ success: boolean; message: string }>
+  onSubmit: (data: LoginCredentials) => Promise<{ 
+    success: boolean; 
+    message: string;
+    user?: {
+      id: string;
+      email: string;
+      name: string;
+      graduationClass: number;
+      isAdmin: boolean;
+    }
+  }>
 }
 
 export default function LoginForm({ onSubmit }: LoginFormProps) {
@@ -30,7 +40,11 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
       
       if (result.success) {
         setFormData({ email: '', password: '' })
-        window.location.href = '/'
+        if (result.user?.isAdmin) {
+          window.location.href = '/admin'
+        } else {
+          window.location.href = '/'
+        }
       }
     } catch (error) {
       setMessage({ type: 'error', text: '로그인 중 오류가 발생했습니다.' })

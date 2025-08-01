@@ -1,11 +1,11 @@
+'use client'
+
 import LoginForm from '@/components/auth/LoginForm'
 import { LoginCredentials } from '@/types/user'
 import Link from 'next/link'
 
 async function handleLogin(data: LoginCredentials) {
-  'use server'
-  
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/login`, {
+  const response = await fetch('/api/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

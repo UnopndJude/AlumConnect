@@ -29,7 +29,17 @@ describe('LoginForm', () => {
   })
 
   it('should submit form with valid data', async () => {
-    mockOnSubmit.mockResolvedValue({ success: true, message: '로그인 성공' })
+    mockOnSubmit.mockResolvedValue({ 
+      success: true, 
+      message: '로그인 성공',
+      user: {
+        id: 'user-1',
+        email: 'test@example.com',
+        name: '테스트',
+        graduationClass: 1,
+        isAdmin: false
+      }
+    })
     
     render(<LoginForm onSubmit={mockOnSubmit} />)
 
@@ -46,8 +56,18 @@ describe('LoginForm', () => {
     })
   })
 
-  it('should show success message and redirect on successful login', async () => {
-    mockOnSubmit.mockResolvedValue({ success: true, message: '로그인되었습니다.' })
+  it('should show success message and redirect to home for regular users', async () => {
+    mockOnSubmit.mockResolvedValue({ 
+      success: true, 
+      message: '로그인되었습니다.',
+      user: {
+        id: 'user-1',
+        email: 'test@example.com',
+        name: '테스트',
+        graduationClass: 1,
+        isAdmin: false
+      }
+    })
     
     render(<LoginForm onSubmit={mockOnSubmit} />)
 
@@ -60,9 +80,39 @@ describe('LoginForm', () => {
       expect(screen.getByText('로그인되었습니다.')).toBeInTheDocument()
     })
 
-    // 리다이렉트 확인
+    // 일반 사용자는 홈으로 리다이렉트
     await waitFor(() => {
       expect(window.location.href).toBe('/')
+    })
+  })
+
+  it('should redirect to admin page for admin users', async () => {
+    mockOnSubmit.mockResolvedValue({ 
+      success: true, 
+      message: '로그인되었습니다.',
+      user: {
+        id: 'admin-1',
+        email: 'admin@example.com',
+        name: '관리자',
+        graduationClass: 1,
+        isAdmin: true
+      }
+    })
+    
+    render(<LoginForm onSubmit={mockOnSubmit} />)
+
+    await user.type(screen.getByLabelText('이메일'), 'admin@example.com')
+    await user.type(screen.getByLabelText('비밀번호'), 'admin123')
+
+    await user.click(screen.getByRole('button', { name: '로그인' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('로그인되었습니다.')).toBeInTheDocument()
+    })
+
+    // 관리자는 admin 페이지로 리다이렉트
+    await waitFor(() => {
+      expect(window.location.href).toBe('/admin')
     })
   })
 
@@ -117,7 +167,17 @@ describe('LoginForm', () => {
   })
 
   it('should clear form after successful login', async () => {
-    mockOnSubmit.mockResolvedValue({ success: true, message: '로그인 성공' })
+    mockOnSubmit.mockResolvedValue({ 
+      success: true, 
+      message: '로그인 성공',
+      user: {
+        id: 'user-1',
+        email: 'test@example.com',
+        name: '테스트',
+        graduationClass: 1,
+        isAdmin: false
+      }
+    })
     
     render(<LoginForm onSubmit={mockOnSubmit} />)
 
