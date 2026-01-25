@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-sans:
+    "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -10,24 +11,24 @@
   --background: #fefefe;
   --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --background-accent: #f8fafc;
-  
+
   /* Text Colors */
   --text-primary: #1e293b;
   --text-secondary: #64748b;
   --text-muted: #94a3b8;
-  
+
   /* Brand Colors */
   --primary: #6366f1;
   --primary-light: #818cf8;
   --primary-dark: #4f46e5;
   --secondary: #ec4899;
   --accent: #06b6d4;
-  
+
   /* Status Colors */
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444;
-  
+
   /* UI Colors */
   --border: #e2e8f0;
   --border-light: #f1f5f9;
@@ -57,7 +58,12 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 700;
   line-height: 1.2;
   color: var(--text-primary);
@@ -88,7 +94,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-light) 100%
+  );
   color: white;
   box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.3);
 }
@@ -255,7 +265,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -264,7 +275,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -315,13 +327,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
   animation: loading 1.5s infinite;
 }
 
@@ -339,7 +356,7 @@ h1, h2, h3, h4, h5, h6 {
   .card {
     padding: 1rem;
   }
-  
+
   .btn {
     padding: 0.625rem 1.25rem;
     font-size: 0.75rem;

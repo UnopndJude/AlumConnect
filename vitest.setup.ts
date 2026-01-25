@@ -42,11 +42,17 @@ Object.defineProperty(HTMLDivElement.prototype, "role", {
 
 // footer를 contentinfo role로 인식하게 설정
 vi.mock("@testing-library/react", async () => {
-  const actual = await vi.importActual("@testing-library/react")
+  const actual = await vi.importActual<typeof import("@testing-library/react")>(
+    "@testing-library/react"
+  )
   return {
     ...actual,
     // footer 요소를 contentinfo role로 인식하게 패치
-    getByRole: (container, role, options) => {
+    getByRole: (
+      container: HTMLElement,
+      role: string,
+      options?: Record<string, unknown>
+    ) => {
       if (role === "contentinfo") {
         return container.querySelector("footer")
       }

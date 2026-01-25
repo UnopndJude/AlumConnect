@@ -1,73 +1,41 @@
-import { Introduction, IntroductionFormData } from '@/types/introduction'
+// Compatibility layer - delegates to new architecture
+import { container } from "@/infrastructure/di/container"
+import { Introduction } from "@/types/introduction"
+import { UserId } from "@/domain/user/value-objects"
 
-let introductions: Introduction[] = []
-
-export const createIntroduction = (
-  userId: string, 
-  userName: string, 
-  userGraduationClass: number,
-  data: IntroductionFormData
-): Introduction => {
-  const newIntroduction: Introduction = {
-    id: `intro-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    userId,
-    userName,
-    userGraduationClass,
-    ...data,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }
-  
-  introductions.push(newIntroduction)
-  return newIntroduction
+export const getAllIntroductions = async (): Promise<Introduction[]> => {
+  const intros = await container.getIntroductionRepository().findAll()
+  return intros.map((i) => i.toPrimitives() as Introduction)
 }
 
-export const getIntroductionByUserId = (userId: string): Introduction | undefined => {
-  return introductions.find(intro => intro.userId === userId)
+export const getIntroductionById = async (
+  id: string
+): Promise<Introduction | undefined> => {
+  const intro = await container.getIntroductionRepository().findById(id)
+  return intro ? (intro.toPrimitives() as Introduction) : undefined
 }
 
-export const getIntroductionById = (id: string): Introduction | undefined => {
-  return introductions.find(intro => intro.id === id)
+export const getIntroductionByUserId = async (
+  userId: string
+): Promise<Introduction | undefined> => {
+  const intro = await container
+    .getIntroductionRepository()
+    .findByUserId(UserId.create(userId))
+  return intro ? (intro.toPrimitives() as Introduction) : undefined
 }
 
-export const updateIntroduction = (
-  id: string, 
-  data: Partial<IntroductionFormData>
-): Introduction | null => {
-  const index = introductions.findIndex(intro => intro.id === id)
-  if (index === -1) return null
-  
-  introductions[index] = {
-    ...introductions[index],
-    ...data,
-    updatedAt: new Date()
-  }
-  
-  return introductions[index]
+export const searchIntroductions = async (
+  query: string
+): Promise<Introduction[]> => {
+  const intros = await container.getIntroductionRepository().search(query)
+  return intros.map((i) => i.toPrimitives() as Introduction)
 }
 
-export const deleteIntroduction = (id: string): boolean => {
-  const index = introductions.findIndex(intro => intro.id === id)
-  if (index === -1) return false
-  
-  introductions.splice(index, 1)
-  return true
-}
-
-export const getAllIntroductions = (): Introduction[] => {
-  return introductions.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-}
-
-export const getIntroductionsByGraduationClass = (graduationClass: number): Introduction[] => {
-  return introductions.filter(intro => intro.userGraduationClass === graduationClass)
-}
-
-export const searchIntroductions = (query: string): Introduction[] => {
-  const lowercaseQuery = query.toLowerCase()
-  return introductions.filter(intro => 
-    intro.userName.toLowerCase().includes(lowercaseQuery) ||
-    intro.field.toLowerCase().includes(lowercaseQuery) ||
-    intro.organization.toLowerCase().includes(lowercaseQuery) ||
-    intro.selfIntroduction.toLowerCase().includes(lowercaseQuery)
-  )
+export const getIntroductionsByGraduationClass = async (
+  graduationClass: number
+): Promise<Introduction[]> => {
+  const intros = await container
+    .getIntroductionRepository()
+    .findByGraduationClass(graduationClass)
+  return intros.map((i) => i.toPrimitives() as Introduction)
 }

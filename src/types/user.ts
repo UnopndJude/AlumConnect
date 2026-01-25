@@ -1,10 +1,13 @@
+// Re-export from domain for backward compatibility
+export type { UserStatusType as UserStatus } from "@/domain/user/value-objects/UserStatus"
+
 export interface User {
   id: string
   email: string
   password: string
   name: string
   graduationClass: number
-  status: 'pending' | 'approved' | 'rejected'
+  status: "pending" | "approved" | "rejected"
   createdAt: Date
   approvedAt?: Date
   rejectedAt?: Date

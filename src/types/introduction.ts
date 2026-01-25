@@ -1,68 +1,75 @@
+// Re-export types for backward compatibility
+export type IntroductionStatus =
+  | "student"
+  | "employed"
+  | "entrepreneur"
+  | "graduate_student"
+  | "other"
+
+export type ContactPreference = "email" | "linkedin" | "phone" | "kakao"
+
+export type LookingFor =
+  | "mentoring"
+  | "networking"
+  | "collaboration"
+  | "job_opportunities"
+  | "investment"
+
 export interface Introduction {
   id: string
   userId: string
-  userName: string
-  userGraduationClass: number
-  
-  // 필수 질문들
-  currentStatus: string // 현재 상태 (대학생/대학원생/직장인/창업/기타)
-  field: string // 전공/업무 분야
-  organization: string // 소속 (학교/회사/기관)
-  selfIntroduction: string // 간단한 자기소개
-  
-  // 선택적 질문들 - 민감할 수 있는 정보
-  location?: string // 거주 지역
-  interests?: string // 관심사/취미
-  recentProjects?: string // 최근 프로젝트/연구
-  careerPath?: string // 진로 여정
-  adviceForJuniors?: string // 후배들에게 하고 싶은 말
-  lookingFor?: string // 찾고 있는 것 (멘토/멘티/협업/정보교류 등)
-  contactPreference?: string // 연락 선호 방법
-  linkedIn?: string // LinkedIn 프로필
-  website?: string // 개인 웹사이트/블로그
-  
+  name: string
+  graduationClass: number
+  status: IntroductionStatus
+  field?: string
+  organization?: string
+  location?: string
+  selfIntroduction: string
+  lookingFor?: LookingFor
+  interests?: string
+  expertise?: string
+  projects?: string
+  contactPreference?: ContactPreference
+  contactInfo?: string
   createdAt: Date
   updatedAt: Date
 }
 
 export interface IntroductionFormData {
-  currentStatus: string
-  field: string
-  organization: string
-  selfIntroduction: string
+  name: string
+  graduationClass: number
+  status: IntroductionStatus
+  field?: string
+  organization?: string
   location?: string
+  selfIntroduction: string
+  lookingFor?: LookingFor
   interests?: string
-  recentProjects?: string
-  careerPath?: string
-  adviceForJuniors?: string
-  lookingFor?: string
-  contactPreference?: string
-  linkedIn?: string
-  website?: string
+  expertise?: string
+  projects?: string
+  contactPreference?: ContactPreference
+  contactInfo?: string
 }
 
 export const STATUS_OPTIONS = [
-  { value: 'undergraduate', label: '대학생' },
-  { value: 'graduate', label: '대학원생' },
-  { value: 'employee', label: '직장인' },
-  { value: 'entrepreneur', label: '창업가' },
-  { value: 'researcher', label: '연구원' },
-  { value: 'freelancer', label: '프리랜서' },
-  { value: 'other', label: '기타' }
+  { value: "student", label: "학생" },
+  { value: "employed", label: "직장인" },
+  { value: "entrepreneur", label: "창업가" },
+  { value: "graduate_student", label: "대학원생" },
+  { value: "other", label: "기타" },
 ]
 
 export const CONTACT_PREFERENCE_OPTIONS = [
-  { value: 'email', label: '이메일' },
-  { value: 'linkedin', label: 'LinkedIn' },
-  { value: 'kakao', label: '카카오톡' },
-  { value: 'none', label: '비공개' }
+  { value: "email", label: "이메일" },
+  { value: "linkedin", label: "LinkedIn" },
+  { value: "phone", label: "전화" },
+  { value: "kakao", label: "카카오톡" },
 ]
 
 export const LOOKING_FOR_OPTIONS = [
-  { value: 'mentor', label: '멘토 찾기' },
-  { value: 'mentee', label: '멘티 찾기' },
-  { value: 'collaboration', label: '협업 파트너' },
-  { value: 'info-exchange', label: '정보 교류' },
-  { value: 'networking', label: '네트워킹' },
-  { value: 'none', label: '특별히 없음' }
+  { value: "mentoring", label: "멘토링" },
+  { value: "networking", label: "네트워킹" },
+  { value: "collaboration", label: "협업" },
+  { value: "job_opportunities", label: "구직/구인" },
+  { value: "investment", label: "투자" },
 ]
