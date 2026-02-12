@@ -1,16 +1,15 @@
 "use client"
 
-import LoginForm from "@/components/auth/LoginForm"
-import { LoginCredentials } from "@/types/user"
+import MagicLinkForm from "@/components/auth/MagicLinkForm"
 import Link from "next/link"
 
-async function handleLogin(data: LoginCredentials) {
-  const response = await fetch("/api/auth/login", {
+async function handleMagicLink(email: string) {
+  const response = await fetch("/api/auth/magic-link", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ email }),
   })
 
   return await response.json()
@@ -56,12 +55,12 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Login Form */}
+        {/* Magic Link Form */}
         <div
           className="card animate-fadeInUp"
           style={{ animationDelay: "0.2s" }}
         >
-          <LoginForm onSubmit={handleLogin} />
+          <MagicLinkForm onSubmit={handleMagicLink} />
         </div>
 
         {/* Footer */}
@@ -80,22 +79,24 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Demo Credentials */}
+        {/* Info Box */}
         <div
           className="animate-fadeInUp mt-10 rounded-xl border border-blue-200 bg-blue-50 p-6"
           style={{ animationDelay: "0.6s" }}
         >
           <h3 className="mb-4 text-lg font-bold text-blue-800">
-            💡 테스트 계정
+            💡 로그인 방법
           </h3>
           <div className="space-y-3 text-blue-700">
             <div className="rounded-lg border border-blue-100 bg-white p-3">
-              <p className="mb-1 font-semibold">관리자 계정</p>
-              <p className="text-sm">admin@incheon-sci.hs.kr / admin123</p>
+              <p className="mb-1 font-semibold">매직 링크 로그인</p>
+              <p className="text-sm">
+                이메일로 전송된 링크를 클릭하면 자동으로 로그인됩니다
+              </p>
             </div>
             <div className="rounded-lg border border-blue-100 bg-white p-3">
-              <p className="mb-1 font-semibold">일반 사용자</p>
-              <p className="text-sm">회원가입 후 이용 가능</p>
+              <p className="mb-1 font-semibold">비밀번호 불필요</p>
+              <p className="text-sm">안전하고 편리한 비밀번호 없는 로그인</p>
             </div>
           </div>
         </div>
