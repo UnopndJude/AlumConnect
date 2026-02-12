@@ -206,7 +206,9 @@ describe("/api/introductions - POST", () => {
       updatedAt: new Date(),
     }
 
-    mockCookies.mockResolvedValue(mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>)
+    mockCookies.mockResolvedValue(
+      mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>
+    )
     mockCookieStore.get.mockReturnValue({ value: "user-123" })
     mockUserRepository.findById.mockResolvedValue(mockUser)
     mockCreateExecute.mockResolvedValue({
@@ -225,7 +227,9 @@ describe("/api/introductions - POST", () => {
   })
 
   it("should return error when user is not logged in", async () => {
-    mockCookies.mockResolvedValue(mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>)
+    mockCookies.mockResolvedValue(
+      mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>
+    )
     mockCookieStore.get.mockReturnValue(undefined)
 
     const request = createMockRequest({})
@@ -250,7 +254,9 @@ describe("/api/introductions - POST", () => {
       isAdmin: false,
     })
 
-    mockCookies.mockResolvedValue(mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>)
+    mockCookies.mockResolvedValue(
+      mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>
+    )
     mockCookieStore.get.mockReturnValue({ value: "user-123" })
     mockUserRepository.findById.mockResolvedValue(mockUser)
 
@@ -280,7 +286,9 @@ describe("/api/introductions - POST", () => {
       selfIntroduction: "소프트웨어 엔지니어입니다.",
     }
 
-    mockCookies.mockResolvedValue(mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>)
+    mockCookies.mockResolvedValue(
+      mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>
+    )
     mockCookieStore.get.mockReturnValue({ value: "user-123" })
     mockUserRepository.findById.mockResolvedValue(mockUser)
     mockCreateExecute.mockResolvedValue({
@@ -317,7 +325,9 @@ describe("/api/introductions - POST", () => {
       // selfIntroduction 누락
     }
 
-    mockCookies.mockResolvedValue(mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>)
+    mockCookies.mockResolvedValue(
+      mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>
+    )
     mockCookieStore.get.mockReturnValue({ value: "user-123" })
     mockUserRepository.findById.mockResolvedValue(mockUser)
 
@@ -347,7 +357,9 @@ describe("/api/introductions - POST", () => {
       selfIntroduction: "소프트웨어 엔지니어입니다.",
     }
 
-    mockCookies.mockResolvedValue(mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>)
+    mockCookies.mockResolvedValue(
+      mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>
+    )
     mockCookieStore.get.mockReturnValue({ value: "user-123" })
     mockUserRepository.findById.mockResolvedValue(mockUser)
     mockCreateExecute.mockRejectedValue(new Error("Database error"))
@@ -362,7 +374,9 @@ describe("/api/introductions - POST", () => {
   })
 
   it("should return error when user is not found", async () => {
-    mockCookies.mockResolvedValue(mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>)
+    mockCookies.mockResolvedValue(
+      mockCookieStore as unknown as Awaited<ReturnType<typeof cookies>>
+    )
     mockCookieStore.get.mockReturnValue({ value: "user-123" })
     mockUserRepository.findById.mockResolvedValue(null)
 

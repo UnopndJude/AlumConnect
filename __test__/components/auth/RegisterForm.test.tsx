@@ -24,10 +24,15 @@ describe("RegisterForm", () => {
 
     // For number input, we need to select all and type to replace the default value
     const classInput = screen.getByLabelText("졸업 기수")
-    fireEvent.change(classInput, { target: { value: String(data.graduationClass) } })
+    fireEvent.change(classInput, {
+      target: { value: String(data.graduationClass) },
+    })
 
     await user.type(screen.getByLabelText("비밀번호"), data.password)
-    await user.type(screen.getByLabelText("비밀번호 확인"), data.confirmPassword)
+    await user.type(
+      screen.getByLabelText("비밀번호 확인"),
+      data.confirmPassword
+    )
   }
 
   it("should render all form fields", () => {
@@ -188,7 +193,9 @@ describe("RegisterForm", () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /처리 중/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole("button", { name: /처리 중/i })
+      ).toBeInTheDocument()
       expect(screen.getByRole("button", { name: /처리 중/i })).toBeDisabled()
     })
   })
