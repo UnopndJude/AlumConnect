@@ -1,0 +1,571 @@
+{
+  "project": "Alumni Push - Newsletter-First Alumni Platform",
+  "branchName": "ralph/alumni-push-newsletter",
+  "description": "Hybrid newsletter-first platform with Supabase Magic Link auth. Designed for Incheon Science High School first, but with extensible architecture for future multi-community support. Verification via Alumni DB matching + Quiz.",
+  "architecture": {
+    "authentication": {
+      "method": "Supabase Magic Link",
+      "flow": "Email → Magic Link → Onboarding (Alumni DB match required) → Optional Quiz → Verified Badge",
+      "userTable": "profiles table linked to auth.users via id FK"
+    },
+    "verification": {
+      "current": "Alumni DB matching (name + graduation_class) + School Quiz",
+      "future": "Pluggable verification providers per community (invite code, email domain, admin approval, etc.)",
+      "note": "Alumni DB match is required during onboarding for MVP. Quiz is optional for 'Verified' badge."
+    },
+    "accessTiers": {
+      "public": ["Newsletter archive", "Email subscription", "Unsubscribe"],
+      "authenticated": [
+        "Profile creation (requires Alumni DB match)",
+        "Subscription preferences",
+        "View directory (limited)"
+      ],
+      "verified": [
+        "Full directory access",
+        "Connection requests",
+        "Announcement submission",
+        "Scraping opt-out"
+      ]
+    },
+    "extensibility": {
+      "concept": "Single community for MVP, but data model supports future multi-tenant expansion",
+      "profileFields": "community_id field reserved for future use (nullable, defaults to 'incheon-science-high')"
+    },
+    "existingCodeChanges": {
+      "remove": [
+        "Password field from User",
+        "Custom password-based login/register",
+        "Admin approval workflow"
+      ],
+      "modify": [
+        "User entity → Profile entity linked to Supabase Auth",
+        "Quiz becomes optional verification step"
+      ],
+      "retain": [
+        "Alumni DB + AlumniMatchingService",
+        "Quiz questions/sessions",
+        "Introduction profiles",
+        "Supabase infrastructure"
+      ]
+    }
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Migrate to Supabase Auth",
+      "description": "As a developer, I want to replace custom auth with Supabase Auth Magic Link so that users can log in without passwords.",
+      "acceptanceCriteria": [
+        "Remove password field from User/Profile entity",
+        "Create profiles table: id (= auth.users.id), email, name, graduation_class, is_verified, is_admin, alumni_id (FK nullable), created_at",
+        "Configure Supabase Auth for Magic Link in dashboard",
+        "Set up email templates for Magic Link",
+        "Remove old /api/auth/login, /api/auth/register password endpoints",
+        "Keep Alumni DB and AlumniMatchingService",
+        "Typecheck passes",
+        "Migration script for existing users if any"
+      ],
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Magic Link Login Flow",
+      "description": "As a visitor, I want to log in via Magic Link so that I can access the platform without a password.",
+      "acceptanceCriteria": [
+        "Login page at /login with email input only",
+        "Sends Magic Link via Supabase Auth signInWithOtp",
+        "Callback page at /auth/callback handles Supabase redirect",
+        "On first login (no profile), redirect to /onboarding",
+        "On returning login (has profile), redirect to home",
+        "Logout functionality",
+        "Typecheck passes",
+        "Component tests"
+      ],
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Onboarding with Alumni DB Verification",
+      "description": "As a new user after first Magic Link login, I want to verify my identity against Alumni DB and create my profile.",
+      "acceptanceCriteria": [
+        "Onboarding page at /onboarding (requires auth, no profile yet)",
+        "Step 1: Enter name + graduation_class",
+        "Step 2: AlumniMatchingService checks against Alumni DB",
+        "If match found: create profile linked to alumni_id, proceed to optional quiz",
+        "If no match: show error, cannot proceed (contact admin for manual addition)",
+        "Creates profile in profiles table linked to auth.users.id",
+        "Typecheck passes",
+        "Component tests"
+      ],
+      "priority": 3,
+      "passes": false
+    },
+    {
+      "id": "US-004",
+      "title": "Optional Quiz Verification",
+      "description": "As a logged-in user with profile, I want to optionally take the alumni quiz so that I can become a 'Verified Alumni' with extra privileges.",
+      "acceptanceCriteria": [
+        "Quiz prompt shown after onboarding (skippable with 'Later' button)",
+        "Quiz page at /verify reuses existing quiz system",
+        "On pass: sets is_verified = true on profile",
+        "Shows 'Verified Alumni' badge on profile and directory",
+        "On fail: can retry (existing retry logic)",
+        "Skip option available - can verify later from settings",
+        "Typecheck passes",
+        "Tests for verification flow"
+      ],
+      "priority": 4,
+      "passes": false
+    },
+    {
+      "id": "US-005",
+      "title": "Auth Middleware & Session Management",
+      "description": "As a developer, I want proper auth middleware so that routes can check authentication and verification status.",
+      "acceptanceCriteria": [
+        "Supabase SSR helpers: createServerClient, createBrowserClient",
+        "Helper: getCurrentUser() returns { user, profile } or null",
+        "Helper: requireAuth() middleware for protected API routes",
+        "Helper: requireVerified() middleware for verified-only routes",
+        "Helper: requireAdmin() middleware for admin routes",
+        "Proper session refresh handling",
+        "Typecheck passes"
+      ],
+      "priority": 5,
+      "passes": false
+    },
+    {
+      "id": "US-006",
+      "title": "Newsletter Domain Model",
+      "description": "As a developer, I want to define Newsletter and NewsletterSection domain entities.",
+      "acceptanceCriteria": [
+        "Newsletter entity with id, edition, title, sections, status (draft/published), publishedAt, createdAt",
+        "NewsletterSection entity with id, type (alumni_in_media/member_announcements/industry_trends), title, content, order",
+        "NewsletterStatus value object with draft/published states",
+        "Entities follow existing DDD patterns (toPrimitives, factory methods)",
+        "Typecheck passes",
+        "Unit tests for entity creation and validation"
+      ],
+      "priority": 6,
+      "passes": false
+    },
+    {
+      "id": "US-007",
+      "title": "Newsletter Subscription Domain Model",
+      "description": "As a developer, I want to define Subscription entity that supports both anonymous and authenticated subscribers.",
+      "acceptanceCriteria": [
+        "Subscription entity with id, email (required), userId (optional), status (active/unsubscribed), subscribedAt, unsubscribedAt",
+        "SubscriptionPreferences value object with optOutFromScraping, contentPreferences array",
+        "Methods: subscribe(), unsubscribe(), linkToUser(userId), updatePreferences(), isActive()",
+        "Anonymous subscriptions have null userId",
+        "Typecheck passes",
+        "Unit tests"
+      ],
+      "priority": 7,
+      "passes": false
+    },
+    {
+      "id": "US-008",
+      "title": "Newsletter Database Schema",
+      "description": "As a developer, I want to create Supabase migrations for newsletter tables.",
+      "acceptanceCriteria": [
+        "newsletters table with edition (unique), title, status, published_at, created_at",
+        "newsletter_sections table with newsletter_id (FK), type, title, content, display_order",
+        "newsletter_subscriptions table with email (unique), user_id (FK nullable to auth.users), status, preferences_json, timestamps",
+        "Proper indexes and RLS policies",
+        "Migration files in supabase/migrations/",
+        "Typecheck passes"
+      ],
+      "priority": 8,
+      "passes": false
+    },
+    {
+      "id": "US-009",
+      "title": "Newsletter Repository Implementation",
+      "description": "As a developer, I want to implement INewsletterRepository with Supabase and in-memory implementations.",
+      "acceptanceCriteria": [
+        "INewsletterRepository interface in domain layer",
+        "SupabaseNewsletterRepository implementation",
+        "InMemoryNewsletterRepository for testing",
+        "Methods: save, findById, findByEdition, findAllPublished, findDrafts, getNextEditionNumber",
+        "Repository registered in DI container",
+        "Typecheck passes",
+        "Repository tests"
+      ],
+      "priority": 9,
+      "passes": false
+    },
+    {
+      "id": "US-010",
+      "title": "Subscription Repository Implementation",
+      "description": "As a developer, I want to implement ISubscriptionRepository.",
+      "acceptanceCriteria": [
+        "ISubscriptionRepository interface in domain layer",
+        "SupabaseSubscriptionRepository implementation",
+        "InMemorySubscriptionRepository for testing",
+        "Methods: save, findByEmail, findByUserId, findAllActive, countActive",
+        "Repository registered in DI container",
+        "Typecheck passes",
+        "Repository tests"
+      ],
+      "priority": 10,
+      "passes": false
+    },
+    {
+      "id": "US-011",
+      "title": "Public Newsletter Subscription",
+      "description": "As a visitor (no login required), I want to subscribe with just my email.",
+      "acceptanceCriteria": [
+        "SubscribeToNewsletterUseCase in application layer",
+        "POST /api/newsletter/subscribe endpoint (public)",
+        "Accepts email only, validates format",
+        "Creates subscription with active status, null userId",
+        "Prevents duplicate subscriptions",
+        "Typecheck passes",
+        "API tests"
+      ],
+      "priority": 11,
+      "passes": false
+    },
+    {
+      "id": "US-012",
+      "title": "Token-based Unsubscribe",
+      "description": "As a subscriber, I want to unsubscribe via a secure link without logging in.",
+      "acceptanceCriteria": [
+        "UnsubscribeUseCase in application layer",
+        "GET /api/newsletter/unsubscribe?token=xxx endpoint (public)",
+        "Token is signed URL containing subscription ID",
+        "Updates subscription status to unsubscribed",
+        "Shows confirmation page",
+        "Typecheck passes",
+        "Tests"
+      ],
+      "priority": 12,
+      "passes": false
+    },
+    {
+      "id": "US-013",
+      "title": "Link Subscription to Account",
+      "description": "As an authenticated user, I want my subscription to auto-link to my account.",
+      "acceptanceCriteria": [
+        "On login, auto-link subscription if email matches",
+        "POST /api/newsletter/link endpoint (requires auth) for manual linking",
+        "If no subscription exists, creates one linked to user",
+        "Typecheck passes",
+        "Tests"
+      ],
+      "priority": 13,
+      "passes": false
+    },
+    {
+      "id": "US-014",
+      "title": "Manage Subscription Preferences",
+      "description": "As an authenticated user, I want to update my subscription preferences.",
+      "acceptanceCriteria": [
+        "UpdateSubscriptionPreferencesUseCase",
+        "PATCH /api/newsletter/preferences endpoint (requires auth)",
+        "Allows setting optOutFromScraping boolean (verified users only)",
+        "Allows selecting content preferences array",
+        "Typecheck passes",
+        "Tests"
+      ],
+      "priority": 14,
+      "passes": false
+    },
+    {
+      "id": "US-015",
+      "title": "Public Newsletter Archive API",
+      "description": "As anyone, I want to view past newsletters via API.",
+      "acceptanceCriteria": [
+        "GetNewsletterArchiveUseCase in application layer",
+        "GET /api/newsletter endpoint (public) - list published newsletters",
+        "GET /api/newsletter/[edition] endpoint (public) - single newsletter",
+        "Returns edition, title, sections, publishedAt",
+        "Supports pagination",
+        "Typecheck passes",
+        "API tests"
+      ],
+      "priority": 15,
+      "passes": false
+    },
+    {
+      "id": "US-016",
+      "title": "Newsletter Archive Web Pages",
+      "description": "As a visitor, I want to browse the newsletter archive on the web.",
+      "acceptanceCriteria": [
+        "Archive list page at /newsletter (public)",
+        "Single newsletter page at /newsletter/[edition] (public)",
+        "Renders sections by type with styling",
+        "Shows subscription CTA",
+        "Mobile-responsive, share button",
+        "Typecheck passes",
+        "Component tests"
+      ],
+      "priority": 16,
+      "passes": false
+    },
+    {
+      "id": "US-017",
+      "title": "Create Newsletter Draft (Admin)",
+      "description": "As an admin, I want to create a newsletter draft.",
+      "acceptanceCriteria": [
+        "CreateNewsletterUseCase in application layer",
+        "POST /api/admin/newsletter endpoint (admin only)",
+        "Creates newsletter with draft status",
+        "Auto-generates next edition number",
+        "Supports adding sections",
+        "Typecheck passes",
+        "API tests"
+      ],
+      "priority": 17,
+      "passes": false
+    },
+    {
+      "id": "US-018",
+      "title": "Edit Newsletter Draft (Admin)",
+      "description": "As an admin, I want to edit a newsletter draft.",
+      "acceptanceCriteria": [
+        "UpdateNewsletterUseCase in application layer",
+        "PATCH /api/admin/newsletter/[id] endpoint (admin only)",
+        "Can only edit drafts",
+        "Update title, add/remove/reorder sections",
+        "Typecheck passes",
+        "API tests"
+      ],
+      "priority": 18,
+      "passes": false
+    },
+    {
+      "id": "US-019",
+      "title": "Publish Newsletter (Admin)",
+      "description": "As an admin, I want to publish a newsletter draft.",
+      "acceptanceCriteria": [
+        "PublishNewsletterUseCase in application layer",
+        "POST /api/admin/newsletter/[id]/publish endpoint (admin only)",
+        "Changes status to published, sets publishedAt",
+        "Validates newsletter has at least one section",
+        "Typecheck passes",
+        "Tests"
+      ],
+      "priority": 19,
+      "passes": false
+    },
+    {
+      "id": "US-020",
+      "title": "Email Service Infrastructure",
+      "description": "As a developer, I want to integrate an email service for newsletter delivery.",
+      "acceptanceCriteria": [
+        "IEmailService interface in infrastructure layer",
+        "Implementation using Resend (or similar)",
+        "Methods: sendNewsletter(to, newsletter), sendBatch(emails, newsletter)",
+        "Generates unsubscribe token per email",
+        "Email template renders newsletter as HTML",
+        "Environment variables for API keys",
+        "Typecheck passes"
+      ],
+      "priority": 20,
+      "passes": false
+    },
+    {
+      "id": "US-021",
+      "title": "Newsletter Distribution (Admin)",
+      "description": "As an admin, I want to distribute a newsletter to all active subscribers.",
+      "acceptanceCriteria": [
+        "DistributeNewsletterUseCase in application layer",
+        "POST /api/admin/newsletter/[id]/distribute endpoint (admin only)",
+        "Fetches all active subscriptions",
+        "Sends via email service in batches",
+        "Includes personalized unsubscribe link",
+        "Returns distribution count",
+        "Typecheck passes",
+        "Tests"
+      ],
+      "priority": 21,
+      "passes": false
+    },
+    {
+      "id": "US-022",
+      "title": "Announcement Domain Model",
+      "description": "As a developer, I want to define Announcement entity for user-submitted news.",
+      "acceptanceCriteria": [
+        "Announcement entity with id, userId, type (job_change/achievement/event/other), title, content, link (optional), status (pending/approved/rejected), timestamps",
+        "AnnouncementStatus value object",
+        "Methods: approve(), reject()",
+        "Typecheck passes",
+        "Unit tests"
+      ],
+      "priority": 22,
+      "passes": false
+    },
+    {
+      "id": "US-023",
+      "title": "Announcement Database & Repository",
+      "description": "As a developer, I want to persist announcements.",
+      "acceptanceCriteria": [
+        "announcements table in Supabase",
+        "IAnnouncementRepository interface",
+        "SupabaseAnnouncementRepository and InMemoryAnnouncementRepository",
+        "Methods: save, findById, findByUserId, findPending, findApproved",
+        "Typecheck passes",
+        "Repository tests"
+      ],
+      "priority": 23,
+      "passes": false
+    },
+    {
+      "id": "US-024",
+      "title": "Submit Announcement (Verified)",
+      "description": "As a verified alumni, I want to submit announcements for the newsletter.",
+      "acceptanceCriteria": [
+        "SubmitAnnouncementUseCase in application layer",
+        "POST /api/announcements endpoint (requires auth + is_verified)",
+        "Creates announcement with pending status",
+        "Typecheck passes",
+        "API tests"
+      ],
+      "priority": 24,
+      "passes": false
+    },
+    {
+      "id": "US-025",
+      "title": "Review Announcements (Admin)",
+      "description": "As an admin, I want to review and approve/reject announcements.",
+      "acceptanceCriteria": [
+        "ReviewAnnouncementUseCase in application layer",
+        "GET /api/admin/announcements - list pending",
+        "POST /api/admin/announcements/[id]/approve",
+        "POST /api/admin/announcements/[id]/reject",
+        "Admin UI page at /admin/announcements",
+        "Typecheck passes",
+        "Tests"
+      ],
+      "priority": 25,
+      "passes": false
+    },
+    {
+      "id": "US-026",
+      "title": "Connection Request Domain Model",
+      "description": "As a developer, I want to define ConnectionRequest entity for networking.",
+      "acceptanceCriteria": [
+        "ConnectionRequest entity with id, requesterId, targetId, status (pending/accepted/rejected), message, timestamps",
+        "ConnectionRequestStatus value object",
+        "Methods: accept(), reject(), isPending()",
+        "Typecheck passes",
+        "Unit tests"
+      ],
+      "priority": 26,
+      "passes": false
+    },
+    {
+      "id": "US-027",
+      "title": "Connection Request Database & Repository",
+      "description": "As a developer, I want to persist connection requests.",
+      "acceptanceCriteria": [
+        "connection_requests table",
+        "IConnectionRequestRepository interface",
+        "SupabaseConnectionRequestRepository and InMemoryConnectionRequestRepository",
+        "Methods: save, findById, findByRequesterId, findByTargetId, findPendingForUser",
+        "Typecheck passes",
+        "Repository tests"
+      ],
+      "priority": 27,
+      "passes": false
+    },
+    {
+      "id": "US-028",
+      "title": "Send Connection Request (Verified)",
+      "description": "As a verified alumni, I want to send a connection request.",
+      "acceptanceCriteria": [
+        "SendConnectionRequestUseCase in application layer",
+        "POST /api/connections endpoint (requires auth + is_verified + has introduction)",
+        "Validates both users are verified with introductions",
+        "Creates pending connection request",
+        "Prevents duplicate pending requests",
+        "Typecheck passes",
+        "API tests"
+      ],
+      "priority": 28,
+      "passes": false
+    },
+    {
+      "id": "US-029",
+      "title": "Respond to Connection Request",
+      "description": "As a target user, I want to accept or reject connection requests.",
+      "acceptanceCriteria": [
+        "RespondToConnectionRequestUseCase in application layer",
+        "POST /api/connections/[id]/respond endpoint (requires auth)",
+        "Body: { action: 'accept' | 'reject' }",
+        "On accept: both users can view contact info from Introduction",
+        "On reject: marks request as rejected",
+        "Typecheck passes",
+        "Tests"
+      ],
+      "priority": 29,
+      "passes": false
+    },
+    {
+      "id": "US-030",
+      "title": "My Connections Page",
+      "description": "As an authenticated user, I want to view my connection requests.",
+      "acceptanceCriteria": [
+        "Connections page at /connections (requires auth + verified)",
+        "Tabs: Sent, Received, Connected",
+        "Accept/Reject buttons for pending received requests",
+        "Connected tab shows contact info from Introductions",
+        "Typecheck passes",
+        "Component tests"
+      ],
+      "priority": 30,
+      "passes": false
+    },
+    {
+      "id": "US-031",
+      "title": "Alumni Directory (Tiered Access)",
+      "description": "As a user, I want to browse the alumni directory with tiered access.",
+      "acceptanceCriteria": [
+        "GET /api/directory endpoint (requires auth)",
+        "Authenticated (not verified): limited fields (name, graduation class, field)",
+        "Verified: full fields, can initiate connection requests",
+        "Search by name, graduation class, field, organization",
+        "Pagination support",
+        "Directory page at /directory",
+        "Typecheck passes",
+        "Tests"
+      ],
+      "priority": 31,
+      "passes": false
+    },
+    {
+      "id": "US-032",
+      "title": "Newsletter Admin Dashboard",
+      "description": "As an admin, I want a dashboard to manage newsletter operations.",
+      "acceptanceCriteria": [
+        "Admin dashboard at /admin/newsletter",
+        "Overview: subscriber count, drafts count, published count",
+        "Quick actions: create draft, view pending announcements",
+        "List of recent newsletters with status",
+        "Typecheck passes",
+        "Component tests"
+      ],
+      "priority": 32,
+      "passes": false
+    },
+    {
+      "id": "US-033",
+      "title": "Landing Page with Newsletter CTA",
+      "description": "As a visitor, I want to see the newsletter value proposition and subscribe.",
+      "acceptanceCriteria": [
+        "Update landing page (/) with newsletter-first messaging",
+        "Prominent email subscription form",
+        "Magic Link login button",
+        "Explanation of verified features (Alumni DB + Quiz)",
+        "Link to newsletter archive",
+        "Mobile-responsive",
+        "Typecheck passes",
+        "Component tests"
+      ],
+      "priority": 33,
+      "passes": false
+    }
+  ]
+}

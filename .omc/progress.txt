@@ -1,0 +1,85 @@
+# Ralph Progress Log
+Started: 2026-02-12T00:00:00Z
+
+## Project
+Alumni Push - Newsletter-First Alumni Platform
+
+## Branch
+ralph/alumni-push-newsletter
+
+## Architecture Decision
+- **Authentication**: Supabase Magic Link (passwordless)
+- **User Flow**:
+  ```
+  Email → Magic Link → Onboarding (Alumni DB 매칭 필수) → [선택] Quiz → Verified Badge
+  ```
+- **Alumni DB**: 온보딩 시 매칭 필수 (기존 기능 유지)
+- **Quiz**: 선택적 - 통과 시 'Verified Alumni' 배지
+- **확장성**: 향후 멀티 커뮤니티 지원 가능한 구조 (community_id 예약)
+
+## Access Tiers
+- **Public**: 뉴스레터 아카이브, 이메일 구독
+- **Authenticated** (Alumni DB 매칭 완료): 프로필, 구독 설정, 디렉토리 (제한적)
+- **Verified** (Quiz 통과): 전체 디렉토리, 네트워킹, 소식 제보, opt-out
+
+## Code Changes
+- **Remove**: Password field, password-based auth, admin approval workflow
+- **Modify**: User → Profile (linked to auth.users), Quiz becomes optional
+- **Retain**: Alumni DB + AlumniMatchingService, Quiz system, Introduction, Supabase infra
+
+## Codebase Patterns
+- Clean Architecture with DDD
+- Repository pattern (Supabase + InMemory)
+- Result<T, E> error handling
+- No semicolons, 2-space indentation
+
+## User Stories Status (33 total)
+
+### Phase 1: Auth Migration (US-001 to US-005) ✅ COMPLETED
+- US-001: Migrate to Supabase Auth [COMPLETED]
+- US-002: Magic Link Login Flow [COMPLETED]
+- US-003: Onboarding with Alumni DB Verification [COMPLETED]
+- US-004: Optional Quiz Verification [COMPLETED]
+- US-005: Auth Middleware & Session Management [COMPLETED]
+
+### Phase 2: Newsletter Core (US-006 to US-010) ✅ COMPLETED
+- US-006: Newsletter Domain Model [COMPLETED]
+- US-007: Newsletter Subscription Domain Model [COMPLETED]
+- US-008: Newsletter Database Schema [COMPLETED]
+- US-009: Newsletter Repository Implementation [COMPLETED]
+- US-010: Subscription Repository Implementation [COMPLETED]
+
+### Phase 3: Public Subscription (US-011 to US-016) ✅ COMPLETED
+- US-011: Public Newsletter Subscription [COMPLETED]
+- US-012: Token-based Unsubscribe [COMPLETED]
+- US-013: Link Subscription to Account [COMPLETED]
+- US-014: Manage Subscription Preferences [COMPLETED]
+- US-015: Public Newsletter Archive API [COMPLETED]
+- US-016: Newsletter Archive Web Pages [COMPLETED]
+
+### Phase 4: Admin Newsletter (US-017 to US-021) ✅ COMPLETED
+- US-017: Create Newsletter Draft (Admin) [COMPLETED]
+- US-018: Edit Newsletter Draft (Admin) [COMPLETED]
+- US-019: Publish Newsletter (Admin) [COMPLETED]
+- US-020: Email Service Infrastructure [COMPLETED]
+- US-021: Newsletter Distribution (Admin) [COMPLETED]
+
+### Phase 5: Announcements (US-022 to US-025) ✅ COMPLETED
+- US-022: Announcement Domain Model [COMPLETED]
+- US-023: Announcement Database & Repository [COMPLETED]
+- US-024: Submit Announcement (Verified) [COMPLETED]
+- US-025: Review Announcements (Admin) [COMPLETED]
+
+### Phase 6: Networking (US-026 to US-030) ✅ COMPLETED
+- US-026: Connection Request Domain Model [COMPLETED]
+- US-027: Connection Request Database & Repository [COMPLETED]
+- US-028: Send Connection Request (Verified) [COMPLETED]
+- US-029: Respond to Connection Request [COMPLETED]
+- US-030: My Connections Page [COMPLETED]
+
+### Phase 7: Directory & UI (US-031 to US-033) ✅ COMPLETED
+- US-031: Alumni Directory (Tiered Access) [COMPLETED]
+- US-032: Newsletter Admin Dashboard [COMPLETED]
+- US-033: Landing Page with Newsletter CTA [COMPLETED]
+
+---
