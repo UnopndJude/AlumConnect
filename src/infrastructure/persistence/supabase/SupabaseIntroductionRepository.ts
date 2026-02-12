@@ -8,9 +8,7 @@ import { IIntroductionRepository } from "@/domain/introduction/repositories/IInt
 import { UserId } from "@/domain/user/value-objects"
 import { createServerSupabaseClient } from "@/infrastructure/supabase"
 
-export class SupabaseIntroductionRepository
-  implements IIntroductionRepository
-{
+export class SupabaseIntroductionRepository implements IIntroductionRepository {
   private get supabase() {
     return createServerSupabaseClient()
   }
@@ -47,7 +45,9 @@ export class SupabaseIntroductionRepository
     return data.map((row) => this.toDomain(row))
   }
 
-  async findByGraduationClass(graduationClass: number): Promise<Introduction[]> {
+  async findByGraduationClass(
+    graduationClass: number
+  ): Promise<Introduction[]> {
     const { data, error } = await this.supabase
       .from("introductions")
       .select("*")
@@ -141,7 +141,8 @@ export class SupabaseIntroductionRepository
       interests: row.interests || undefined,
       expertise: row.expertise || undefined,
       projects: row.projects || undefined,
-      contactPreference: (row.contact_preference as ContactPreference) || undefined,
+      contactPreference:
+        (row.contact_preference as ContactPreference) || undefined,
       contactInfo: row.contact_info || undefined,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
