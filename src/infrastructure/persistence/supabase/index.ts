@@ -1,0 +1,5 @@
+export { SupabaseUserRepository } from "./SupabaseUserRepository"
+export { SupabaseAlumniRepository } from "./SupabaseAlumniRepository"
+export { SupabaseIntroductionRepository } from "./SupabaseIntroductionRepository"
+export { SupabaseQuizQuestionRepository } from "./SupabaseQuizQuestionRepository"
+export { SupabaseQuizSessionRepository } from "./SupabaseQuizSessionRepository"
