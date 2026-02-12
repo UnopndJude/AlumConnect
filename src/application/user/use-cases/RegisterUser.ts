@@ -4,7 +4,6 @@ import {
   Email,
   Password,
   GraduationClass,
-  UserStatus,
   PasswordHasher,
 } from "@/domain/user/value-objects"
 import { Result } from "@/shared/types/Result"
@@ -61,19 +60,15 @@ export class RegisterUserUseCase {
       passwordResult.value.plainValue
     )
 
-    // Create user
-    const status = options.autoApprove
-      ? UserStatus.approved()
-      : UserStatus.pending()
-
+    // Create user (always starts as pending)
     const user = User.create({
       email: emailResult.value,
       password: Password.createFromHashed(hashedPassword),
       name: dto.name,
       graduationClass: graduationClassResult.value,
-      status,
     })
 
+    // Auto-approve if eligible
     if (options.autoApprove) {
       user.approve()
     }

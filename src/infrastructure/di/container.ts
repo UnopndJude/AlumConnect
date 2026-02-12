@@ -5,16 +5,32 @@ import { IQuizSessionRepository } from "@/domain/quiz/repositories/IQuizSessionR
 import { IIntroductionRepository } from "@/domain/introduction/repositories/IIntroductionRepository"
 import { PasswordHasher } from "@/domain/user/value-objects/Password"
 
+// In-memory repositories (for testing)
 import { InMemoryUserRepository } from "../persistence/in-memory/InMemoryUserRepository"
 import { InMemoryAlumniRepository } from "../persistence/in-memory/InMemoryAlumniRepository"
 import { InMemoryQuizQuestionRepository } from "../persistence/in-memory/InMemoryQuizQuestionRepository"
 import { InMemoryQuizSessionRepository } from "../persistence/in-memory/InMemoryQuizSessionRepository"
 import { InMemoryIntroductionRepository } from "../persistence/in-memory/InMemoryIntroductionRepository"
+
+// Supabase repositories (for production)
+import { SupabaseUserRepository } from "../persistence/supabase/SupabaseUserRepository"
+import { SupabaseAlumniRepository } from "../persistence/supabase/SupabaseAlumniRepository"
+import { SupabaseQuizQuestionRepository } from "../persistence/supabase/SupabaseQuizQuestionRepository"
+import { SupabaseQuizSessionRepository } from "../persistence/supabase/SupabaseQuizSessionRepository"
+import { SupabaseIntroductionRepository } from "../persistence/supabase/SupabaseIntroductionRepository"
+
 import { BcryptPasswordService } from "../services/BcryptPasswordService"
 
 import { AlumniMatchingService } from "@/domain/alumni/services/AlumniMatchingService"
 import { QuizGradingService } from "@/domain/quiz/services/QuizGradingService"
 import { QuizConfig } from "@/domain/quiz/entities/QuizSession"
+
+// Check if Supabase is configured
+const useSupabase = !!(
+  process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+)
 
 // Singleton instances
 let userRepository: IUserRepository | null = null
@@ -35,35 +51,45 @@ export const container = {
   // Repositories
   getUserRepository(): IUserRepository {
     if (!userRepository) {
-      userRepository = new InMemoryUserRepository()
+      userRepository = useSupabase
+        ? new SupabaseUserRepository()
+        : new InMemoryUserRepository()
     }
     return userRepository
   },
 
   getAlumniRepository(): IAlumniRepository {
     if (!alumniRepository) {
-      alumniRepository = new InMemoryAlumniRepository()
+      alumniRepository = useSupabase
+        ? new SupabaseAlumniRepository()
+        : new InMemoryAlumniRepository()
     }
     return alumniRepository
   },
 
   getQuizQuestionRepository(): IQuizQuestionRepository {
     if (!quizQuestionRepository) {
-      quizQuestionRepository = new InMemoryQuizQuestionRepository()
+      quizQuestionRepository = useSupabase
+        ? new SupabaseQuizQuestionRepository()
+        : new InMemoryQuizQuestionRepository()
     }
     return quizQuestionRepository
   },
 
   getQuizSessionRepository(): IQuizSessionRepository {
     if (!quizSessionRepository) {
-      quizSessionRepository = new InMemoryQuizSessionRepository()
+      quizSessionRepository = useSupabase
+        ? new SupabaseQuizSessionRepository(this.getQuizQuestionRepository())
+        : new InMemoryQuizSessionRepository()
     }
     return quizSessionRepository
   },
 
   getIntroductionRepository(): IIntroductionRepository {
     if (!introductionRepository) {
-      introductionRepository = new InMemoryIntroductionRepository()
+      introductionRepository = useSupabase
+        ? new SupabaseIntroductionRepository()
+        : new InMemoryIntroductionRepository()
     }
     return introductionRepository
   },

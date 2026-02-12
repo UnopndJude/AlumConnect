@@ -83,7 +83,8 @@ export async function POST(request: NextRequest) {
       message,
       user: result.value.user,
     })
-  } catch {
+  } catch (error) {
+    console.error("Complete registration error:", error)
     return NextResponse.json(
       { success: false, message: "서버 오류가 발생했습니다." },
       { status: 500 }

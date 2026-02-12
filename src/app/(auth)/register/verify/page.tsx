@@ -14,15 +14,20 @@ export default function VerifyPage() {
   const [data, setData] = useState<RegistrationComplete | null>(null)
 
   useEffect(() => {
+    // Skip if data already loaded (handles React Strict Mode double-run)
+    if (data) return
+
     const stored = sessionStorage.getItem("registrationComplete")
     if (!stored) {
       router.push("/register")
       return
     }
 
-    setData(JSON.parse(stored))
+    const parsed = JSON.parse(stored)
+    setData(parsed)
+    // Remove after setting data to prevent re-read issues
     sessionStorage.removeItem("registrationComplete")
-  }, [router])
+  }, [router, data])
 
   if (!data) {
     return (

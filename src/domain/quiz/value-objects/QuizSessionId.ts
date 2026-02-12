@@ -2,8 +2,7 @@ export class QuizSessionId {
   private constructor(private readonly value: string) {}
 
   static create(id?: string): QuizSessionId {
-    const value =
-      id || `quiz-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    const value = id || crypto.randomUUID()
     return new QuizSessionId(value)
   }
 

@@ -34,6 +34,9 @@ export default function QuizPage() {
 
   useEffect(() => {
     const loadRegistrationData = async () => {
+      // Skip if already loaded (handles React Strict Mode)
+      if (registrationData) return
+
       const stored = sessionStorage.getItem("registrationData")
       if (!stored) {
         router.push("/register")
@@ -72,6 +75,7 @@ export default function QuizPage() {
     }
 
     loadRegistrationData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
   const handleSubmitQuiz = async (answers: number[]) => {

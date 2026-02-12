@@ -26,7 +26,8 @@ export async function POST(request: NextRequest) {
       ...result.value,
       message: "퀴즈를 시작합니다. 5문제 중 4문제 이상 맞추셔야 합니다.",
     })
-  } catch {
+  } catch (error) {
+    console.error("Quiz API error:", error)
     return NextResponse.json(
       { success: false, message: "서버 오류가 발생했습니다." },
       { status: 500 }

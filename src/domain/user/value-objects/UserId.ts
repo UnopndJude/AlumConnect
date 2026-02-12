@@ -2,8 +2,7 @@ export class UserId {
   private constructor(private readonly value: string) {}
 
   static create(id?: string): UserId {
-    const value =
-      id || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    const value = id || crypto.randomUUID()
     return new UserId(value)
   }
 

@@ -44,7 +44,7 @@ export class Introduction {
   ): Introduction {
     return new Introduction({
       ...props,
-      id: `intro-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: crypto.randomUUID(),
       createdAt: new Date(),
       updatedAt: new Date(),
     })
