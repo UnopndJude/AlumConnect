@@ -17,6 +17,14 @@ export type LookingFor =
   | "investment"
 export type QuestionType = "basic" | "facility" | "culture" | "class_specific"
 export type Difficulty = "easy" | "medium" | "hard"
+export type NewsletterStatus = "draft" | "published"
+export type SectionType =
+  | "alumni_in_media"
+  | "member_announcements"
+  | "industry_trends"
+export type SubscriptionStatus = "active" | "unsubscribed"
+export type AnnouncementStatus = "pending" | "approved" | "rejected"
+export type ConnectionStatus = "pending" | "accepted" | "rejected"
 
 export interface Database {
   public: {
@@ -59,6 +67,54 @@ export interface Database {
           rejected_at?: string | null
         }
         Relationships: []
+      }
+      profiles: {
+        Row: {
+          id: string
+          email: string
+          name: string
+          graduation_class: number
+          is_verified: boolean
+          is_admin: boolean
+          alumni_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id: string
+          email: string
+          name: string
+          graduation_class: number
+          is_verified?: boolean
+          is_admin?: boolean
+          alumni_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          name?: string
+          graduation_class?: number
+          is_verified?: boolean
+          is_admin?: boolean
+          alumni_id?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "auth.users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_alumni_id_fkey"
+            columns: ["alumni_id"]
+            isOneToOne: false
+            referencedRelation: "alumni"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       alumni: {
         Row: {
@@ -232,6 +288,220 @@ export interface Database {
           },
         ]
       }
+      newsletters: {
+        Row: {
+          id: string
+          edition: number
+          title: string
+          status: NewsletterStatus
+          published_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          edition: number
+          title: string
+          status?: NewsletterStatus
+          published_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          edition?: number
+          title?: string
+          status?: NewsletterStatus
+          published_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
+      newsletter_sections: {
+        Row: {
+          id: string
+          newsletter_id: string
+          type: SectionType
+          title: string
+          content: string
+          display_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          newsletter_id: string
+          type: SectionType
+          title: string
+          content: string
+          display_order?: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          newsletter_id?: string
+          type?: SectionType
+          title?: string
+          content?: string
+          display_order?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_sections_newsletter_id_fkey"
+            columns: ["newsletter_id"]
+            isOneToOne: false
+            referencedRelation: "newsletters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsletter_subscriptions: {
+        Row: {
+          id: string
+          email: string
+          user_id: string | null
+          status: SubscriptionStatus
+          preferences: {
+            optOutFromScraping: boolean
+            contentPreferences: SectionType[]
+          }
+          subscribed_at: string
+          unsubscribed_at: string | null
+          unsubscribe_token: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          user_id?: string | null
+          status?: SubscriptionStatus
+          preferences?: {
+            optOutFromScraping: boolean
+            contentPreferences: SectionType[]
+          }
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          unsubscribe_token?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          user_id?: string | null
+          status?: SubscriptionStatus
+          preferences?: {
+            optOutFromScraping: boolean
+            contentPreferences: SectionType[]
+          }
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          unsubscribe_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "auth.users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          id: string
+          author_id: string
+          type: SectionType
+          title: string
+          content: string
+          status: AnnouncementStatus
+          reviewed_by: string | null
+          reviewed_at: string | null
+          rejection_reason: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          author_id: string
+          type: SectionType
+          title: string
+          content: string
+          status?: AnnouncementStatus
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          rejection_reason?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          author_id?: string
+          type?: SectionType
+          title?: string
+          content?: string
+          status?: AnnouncementStatus
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          rejection_reason?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcements_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connections: {
+        Row: {
+          id: string
+          requester_id: string
+          receiver_id: string
+          message: string | null
+          status: ConnectionStatus
+          responded_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          requester_id: string
+          receiver_id: string
+          message?: string | null
+          status?: ConnectionStatus
+          responded_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          requester_id?: string
+          receiver_id?: string
+          message?: string | null
+          status?: ConnectionStatus
+          responded_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connections_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -246,6 +516,11 @@ export interface Database {
       looking_for: LookingFor
       question_type: QuestionType
       difficulty: Difficulty
+      newsletter_status: NewsletterStatus
+      section_type: SectionType
+      subscription_status: SubscriptionStatus
+      announcement_status: AnnouncementStatus
+      connection_status: ConnectionStatus
     }
   }
 }

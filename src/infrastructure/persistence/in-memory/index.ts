@@ -1,0 +1,8 @@
+export { InMemoryUserRepository } from "./InMemoryUserRepository"
+export { InMemoryAlumniRepository } from "./InMemoryAlumniRepository"
+export { InMemoryIntroductionRepository } from "./InMemoryIntroductionRepository"
+export { InMemoryQuizQuestionRepository } from "./InMemoryQuizQuestionRepository"
+export { InMemoryQuizSessionRepository } from "./InMemoryQuizSessionRepository"
+export { InMemoryProfileRepository } from "./InMemoryProfileRepository"
+export { InMemorySubscriptionRepository } from "./InMemorySubscriptionRepository"
+export { InMemoryNewsletterRepository } from "./InMemoryNewsletterRepository"
