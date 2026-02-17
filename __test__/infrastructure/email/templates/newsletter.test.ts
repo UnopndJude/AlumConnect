@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest"
-import { Newsletter } from "@/domain/newsletter/entities/Newsletter"
+import {
+  Newsletter,
+  NewsletterProps,
+} from "@/domain/newsletter/entities/Newsletter"
 import { NewsletterSection } from "@/domain/newsletter/entities/NewsletterSection"
 import {
   generateNewsletterHtml,
@@ -107,11 +110,12 @@ describe("Newsletter Email Templates", () => {
 
   describe("edge cases", () => {
     it("should handle newsletter with no published date", () => {
+      const primitives = mockNewsletter.toPrimitives()
       const draftNewsletter = Newsletter.fromPrimitives({
-        ...mockNewsletter.toPrimitives(),
+        ...primitives,
         publishedAt: null,
         status: "draft",
-      })
+      } as NewsletterProps)
 
       const html = generateNewsletterHtml(draftNewsletter, {
         unsubscribeToken: "token",
@@ -122,10 +126,11 @@ describe("Newsletter Email Templates", () => {
     })
 
     it("should handle empty sections array", () => {
+      const primitives = mockNewsletter.toPrimitives()
       const emptyNewsletter = Newsletter.fromPrimitives({
-        ...mockNewsletter.toPrimitives(),
+        ...primitives,
         sections: [],
-      })
+      } as NewsletterProps)
 
       const html = generateNewsletterHtml(emptyNewsletter, {
         unsubscribeToken: "token",

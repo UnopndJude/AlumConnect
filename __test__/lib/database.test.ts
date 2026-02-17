@@ -21,6 +21,8 @@ const mockUserRepository = {
   findById: vi.fn(),
   findPending: vi.fn(),
   findAll: vi.fn(),
+  findByEmail: vi.fn(),
+  save: vi.fn(),
 }
 
 // Mock user entity

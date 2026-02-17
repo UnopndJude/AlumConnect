@@ -16,6 +16,7 @@ vi.mock("@/infrastructure/di/container", () => ({
 
 import { requireAuth } from "@/infrastructure/auth/middleware"
 import { container } from "@/infrastructure/di/container"
+import { NextResponse } from "next/server"
 
 const mockRequireAuth = vi.mocked(requireAuth)
 const mockGetProfileRepository = vi.mocked(container.getProfileRepository)
@@ -45,7 +46,7 @@ describe("/api/directory - GET", () => {
   it("should return 401 when user is not authenticated", async () => {
     mockRequireAuth.mockResolvedValue({
       success: false,
-      response: Response.json(
+      response: NextResponse.json(
         { success: false, message: "로그인이 필요합니다." },
         { status: 401 }
       ),
@@ -339,9 +340,7 @@ describe("/api/directory - GET", () => {
       },
     })
 
-    mockProfileRepository.findAll.mockRejectedValue(
-      new Error("Database error")
-    )
+    mockProfileRepository.findAll.mockRejectedValue(new Error("Database error"))
 
     const request = createMockRequest()
     const response = await GET(request)

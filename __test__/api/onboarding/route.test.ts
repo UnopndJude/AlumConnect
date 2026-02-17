@@ -35,20 +35,24 @@ const mockSupabase = {
   from: vi.fn(),
 }
 
+const mockedCreateServerClient = createServerClient as ReturnType<typeof vi.fn>
+
 describe("/api/onboarding", () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    vi.mocked(createServerClient).mockResolvedValue(
-      mockSupabase as unknown as ReturnType<typeof createServerClient>
+    mockedCreateServerClient.mockResolvedValue(
+      mockSupabase as unknown as Awaited<ReturnType<typeof createServerClient>>
     )
     vi.mocked(container.getAlumniMatchingService).mockReturnValue(
-      mockAlumniMatchingService as ReturnType<
+      mockAlumniMatchingService as unknown as ReturnType<
         typeof container.getAlumniMatchingService
       >
     )
     vi.mocked(container.getProfileRepository).mockReturnValue(
-      mockProfileRepository as ReturnType<typeof container.getProfileRepository>
+      mockProfileRepository as unknown as ReturnType<
+        typeof container.getProfileRepository
+      >
     )
   })
 

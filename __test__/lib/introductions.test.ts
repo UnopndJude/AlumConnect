@@ -23,6 +23,8 @@ const mockIntroductionRepository = {
   findByUserId: vi.fn(),
   search: vi.fn(),
   findByGraduationClass: vi.fn(),
+  save: vi.fn(),
+  delete: vi.fn(),
 }
 
 // Mock introduction entity
