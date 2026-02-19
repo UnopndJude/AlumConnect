@@ -19,7 +19,7 @@ export async function getAuthUser(): Promise<AuthResult | null> {
   const result = await getCurrentUser()
   if (!result.user) return null
   return {
-    user: { id: result.user.id, email: result.user.email! },
+    user: { id: result.user.id, email: result.user.email ?? "" },
     profile: result.profile,
   }
 }

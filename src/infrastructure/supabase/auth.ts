@@ -46,9 +46,11 @@ export async function createServerClient() {
 export async function getSession() {
   const supabase = await createServerClient()
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
-  return session
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+  if (error || !user) return null
+  return { user }
 }
 
 /**
@@ -74,7 +76,7 @@ export async function getCurrentUser() {
     return {
       user: {
         id: session.user.id,
-        email: session.user.email!,
+        email: session.user.email ?? "",
       },
       profile: null,
     }
@@ -83,7 +85,7 @@ export async function getCurrentUser() {
   return {
     user: {
       id: session.user.id,
-      email: session.user.email!,
+      email: session.user.email ?? "",
     },
     profile: {
       id: profile.id,

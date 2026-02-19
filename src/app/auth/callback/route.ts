@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     // Check if user has a profile in the users table
     const { data: profile } = await supabase
-      .from("users")
+      .from("profiles")
       .select("*")
       .eq("id", user.id)
       .single()
