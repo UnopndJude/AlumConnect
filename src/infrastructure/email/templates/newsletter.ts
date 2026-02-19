@@ -5,6 +5,15 @@ interface NewsletterTemplateOptions {
   baseUrl: string
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+}
+
 export function generateNewsletterHtml(
   newsletter: Newsletter,
   options: NewsletterTemplateOptions
@@ -19,10 +28,10 @@ export function generateNewsletterHtml(
       return `
         <div style="margin-bottom: 32px;">
           <h2 style="color: #1f2937; font-size: 20px; font-weight: 600; margin-bottom: 12px;">
-            ${sectionTitle}
+            ${escapeHtml(sectionTitle)}
           </h2>
           <h3 style="color: #374151; font-size: 16px; font-weight: 500; margin-bottom: 8px;">
-            ${section.title}
+            ${escapeHtml(section.title)}
           </h3>
           <div style="color: #4b5563; font-size: 14px; line-height: 1.6;">
             ${formatContent(section.content)}
@@ -38,7 +47,7 @@ export function generateNewsletterHtml(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${newsletter.title}</title>
+  <title>${escapeHtml(newsletter.title)}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f9fafb;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f9fafb;">
@@ -61,7 +70,7 @@ export function generateNewsletterHtml(
           <tr>
             <td style="padding: 24px 32px;">
               <h2 style="margin: 0; color: #111827; font-size: 28px; font-weight: 700;">
-                ${newsletter.title}
+                ${escapeHtml(newsletter.title)}
               </h2>
             </td>
           </tr>
@@ -95,7 +104,10 @@ export function generateNewsletterHtml(
   `.trim()
 }
 
-export function generateNewsletterText(newsletter: Newsletter): string {
+export function generateNewsletterText(
+  newsletter: Newsletter,
+  options?: NewsletterTemplateOptions
+): string {
   const sections = newsletter.sections
     .sort((a, b) => a.order - b.order)
     .map((section) => {
@@ -121,8 +133,7 @@ ${"=".repeat(newsletter.title.length)}
 ${sections}
 
 ---
-인천과학고등학교 동문회 AlumConnect
-수신거부: {unsubscribeUrl}
+인천과학고등학교 동문회 AlumConnect${options ? `\n수신거부: ${options.baseUrl}/api/newsletter/unsubscribe?token=${options.unsubscribeToken}` : ""}
   `.trim()
 }
 

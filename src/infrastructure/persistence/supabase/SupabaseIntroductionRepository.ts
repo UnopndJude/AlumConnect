@@ -59,11 +59,15 @@ export class SupabaseIntroductionRepository implements IIntroductionRepository {
   }
 
   async search(query: string): Promise<Introduction[]> {
+    // Sanitize query to prevent PostgREST filter injection
+    const sanitized = query.replace(/[%_\\(),."']/g, "")
+    if (!sanitized.trim()) return []
+
     const { data, error } = await this.supabase
       .from("introductions")
       .select("*")
       .or(
-        `name.ilike.%${query}%,field.ilike.%${query}%,organization.ilike.%${query}%,self_introduction.ilike.%${query}%`
+        `name.ilike.%${sanitized}%,field.ilike.%${sanitized}%,organization.ilike.%${sanitized}%,self_introduction.ilike.%${sanitized}%`
       )
       .order("created_at", { ascending: false })
 

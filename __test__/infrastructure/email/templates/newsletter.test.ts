@@ -89,7 +89,18 @@ describe("Newsletter Email Templates", () => {
       expect(text).toContain("Alumni News Section")
       expect(text).toContain("업계 동향")
       expect(text).toContain("Industry Trends")
-      expect(text).toContain("수신거부: {unsubscribeUrl}")
+      expect(text).toContain("인천과학고등학교 동문회 AlumConnect")
+    })
+
+    it("should include unsubscribe URL when options provided", () => {
+      const text = generateNewsletterText(mockNewsletter, {
+        unsubscribeToken: "test-token",
+        baseUrl: "https://example.com",
+      })
+
+      expect(text).toContain(
+        "수신거부: https://example.com/api/newsletter/unsubscribe?token=test-token"
+      )
     })
 
     it("should strip HTML tags from content", () => {

@@ -4,6 +4,15 @@ import { ConnectionId } from "@/domain/connection/value-objects"
 import { ConnectionStatus } from "@/infrastructure/supabase/types"
 import { createServerSupabaseClient } from "@/infrastructure/supabase"
 
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+function assertUUID(value: string, name: string): void {
+  if (!UUID_REGEX.test(value)) {
+    throw new Error(`Invalid UUID for ${name}: ${value}`)
+  }
+}
+
 export class SupabaseConnectionRepository implements IConnectionRepository {
   private get supabase() {
     return createServerSupabaseClient()
@@ -70,6 +79,7 @@ export class SupabaseConnectionRepository implements IConnectionRepository {
   }
 
   async findAcceptedConnections(userId: string): Promise<Connection[]> {
+    assertUUID(userId, "userId")
     const { data, error } = await this.supabase
       .from("connections")
       .select("*")
@@ -84,6 +94,8 @@ export class SupabaseConnectionRepository implements IConnectionRepository {
     userId1: string,
     userId2: string
   ): Promise<Connection | null> {
+    assertUUID(userId1, "userId1")
+    assertUUID(userId2, "userId2")
     const { data, error } = await this.supabase
       .from("connections")
       .select("*")
