@@ -41,7 +41,9 @@ export default async function ConnectionsPage() {
   userIds.delete(profile.id)
 
   const userProfiles = await Promise.all(
-    Array.from(userIds).map((id) => profileRepository.findById(ProfileId.create(id)))
+    Array.from(userIds).map((id) =>
+      profileRepository.findById(ProfileId.create(id))
+    )
   )
 
   const profileMap = new Map(
@@ -75,21 +77,31 @@ export default async function ConnectionsPage() {
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Tabs */}
         <div className="mb-8 border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
-            <button className="border-b-2 border-blue-500 px-1 pb-4 text-sm font-medium text-blue-600">
+          <nav className="-mb-px flex space-x-8" aria-label="연결 탭">
+            <a
+              href="#received"
+              className="border-b-2 border-blue-500 px-1 pb-4 text-sm font-medium text-blue-600"
+              aria-current="page"
+            >
               받은 요청 ({pendingReceived.length})
-            </button>
-            <button className="border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+            </a>
+            <a
+              href="#accepted"
+              className="border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+            >
               연결됨 ({acceptedConnections.length})
-            </button>
-            <button className="border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+            </a>
+            <a
+              href="#sent"
+              className="border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+            >
               보낸 요청 ({pendingSent.length})
-            </button>
+            </a>
           </nav>
         </div>
 
         {/* Pending Received */}
-        <section className="mb-12">
+        <section id="received" className="mb-12">
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             받은 연결 요청
           </h2>
@@ -133,11 +145,7 @@ export default async function ConnectionsPage() {
                           action={`/api/connections/${connData.id}/respond`}
                           method="POST"
                         >
-                          <input
-                            type="hidden"
-                            name="action"
-                            value="accept"
-                          />
+                          <input type="hidden" name="action" value="accept" />
                           <button
                             type="submit"
                             className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
@@ -149,11 +157,7 @@ export default async function ConnectionsPage() {
                           action={`/api/connections/${connData.id}/respond`}
                           method="POST"
                         >
-                          <input
-                            type="hidden"
-                            name="action"
-                            value="reject"
-                          />
+                          <input type="hidden" name="action" value="reject" />
                           <button
                             type="submit"
                             className="rounded-md bg-gray-600 px-4 py-2 text-sm text-white hover:bg-gray-700"
@@ -171,7 +175,7 @@ export default async function ConnectionsPage() {
         </section>
 
         {/* Accepted Connections */}
-        <section className="mb-12">
+        <section id="accepted" className="mb-12">
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             연결된 동문 ({acceptedConnections.length})
           </h2>
@@ -224,7 +228,7 @@ export default async function ConnectionsPage() {
         </section>
 
         {/* Sent Connections */}
-        <section>
+        <section id="sent">
           <h2 className="mb-4 text-lg font-semibold text-gray-900">
             보낸 연결 요청 ({pendingSent.length})
           </h2>

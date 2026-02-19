@@ -69,7 +69,11 @@ export default function NewsletterForm({
     ])
   }
 
-  const updateSection = (index: number, field: keyof SectionFormData, value: string | number) => {
+  const updateSection = (
+    index: number,
+    field: keyof SectionFormData,
+    value: string | number
+  ) => {
     const newSections = [...sections]
     newSections[index] = { ...newSections[index], [field]: value }
     setSections(newSections)
@@ -130,6 +134,11 @@ export default function NewsletterForm({
       const existingResponse = await fetch(
         `/api/admin/newsletter/${currentId}/sections`
       )
+      if (!existingResponse.ok) {
+        setError("섹션 목록 조회에 실패했습니다.")
+        setIsSaving(false)
+        return
+      }
       const existingData = await existingResponse.json()
       const existingSections = existingData.success ? existingData.data : []
 
@@ -235,7 +244,7 @@ export default function NewsletterForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="예: 2024년 2월 뉴스레터"
-          className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-800 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+          className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-800 focus:border-violet-500 focus:ring-2 focus:ring-violet-200 focus:outline-none"
         />
       </div>
 
@@ -286,7 +295,7 @@ export default function NewsletterForm({
                     onChange={(e) =>
                       updateSection(index, "type", e.target.value)
                     }
-                    className="w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-800 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                    className="w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-800 focus:border-violet-500 focus:ring-2 focus:ring-violet-200 focus:outline-none"
                   >
                     {SECTION_TYPES.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -307,7 +316,7 @@ export default function NewsletterForm({
                       updateSection(index, "title", e.target.value)
                     }
                     placeholder="섹션 제목을 입력하세요"
-                    className="w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-800 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                    className="w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-800 focus:border-violet-500 focus:ring-2 focus:ring-violet-200 focus:outline-none"
                   />
                 </div>
 
@@ -322,7 +331,7 @@ export default function NewsletterForm({
                     }
                     placeholder="섹션 내용을 입력하세요"
                     rows={6}
-                    className="w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-800 focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+                    className="w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-800 focus:border-violet-500 focus:ring-2 focus:ring-violet-200 focus:outline-none"
                   />
                 </div>
               </div>

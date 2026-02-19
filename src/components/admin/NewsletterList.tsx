@@ -24,6 +24,10 @@ export default function NewsletterList({
   const refreshNewsletters = async () => {
     try {
       const response = await fetch("/api/admin/newsletter")
+      if (!response.ok) {
+        console.error("Newsletter API error:", response.status)
+        return
+      }
       const data = await response.json()
 
       if (data.success) {
@@ -57,7 +61,11 @@ export default function NewsletterList({
   }
 
   const handlePublish = async (id: string) => {
-    if (!confirm("이 뉴스레터를 발행하시겠습니까? 발행 후에는 수정할 수 없습니다.")) {
+    if (
+      !confirm(
+        "이 뉴스레터를 발행하시겠습니까? 발행 후에는 수정할 수 없습니다."
+      )
+    ) {
       return
     }
 
@@ -141,8 +149,7 @@ export default function NewsletterList({
             onClick={() => setIsCreating(true)}
             className="btn btn-primary px-6 py-3 text-base"
           >
-            <span className="mr-2 text-lg">➕</span>
-            새 뉴스레터
+            <span className="mr-2 text-lg">➕</span>새 뉴스레터
           </button>
         )}
       </div>

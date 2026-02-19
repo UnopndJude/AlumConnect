@@ -43,11 +43,16 @@ export default function DirectoryList({
       try {
         const params = new URLSearchParams()
         if (query) params.set("q", query)
-        if (graduationClass) params.set("graduationClass", graduationClass.toString())
+        if (graduationClass)
+          params.set("graduationClass", graduationClass.toString())
         params.set("page", page.toString())
         params.set("limit", "20")
 
         const response = await fetch(`/api/directory?${params.toString()}`)
+        if (!response.ok) {
+          console.error("Directory API error:", response.status)
+          return
+        }
         const result = await response.json()
 
         if (result.success) {
@@ -96,7 +101,7 @@ export default function DirectoryList({
         {profiles.map((profile) => (
           <div
             key={profile.id}
-            className="rounded-lg bg-white p-6 shadow hover:shadow-md transition-shadow"
+            className="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
