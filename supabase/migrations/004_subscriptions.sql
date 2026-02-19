@@ -14,10 +14,10 @@ CREATE TABLE newsletter_subscriptions (
 )
 
 -- Indexes
-CREATE INDEX idx_subscriptions_email ON newsletter_subscriptions(email)
-CREATE INDEX idx_subscriptions_user_id ON newsletter_subscriptions(user_id)
-CREATE INDEX idx_subscriptions_status ON newsletter_subscriptions(status)
-CREATE INDEX idx_subscriptions_unsubscribe_token ON newsletter_subscriptions(unsubscribe_token)
+CREATE INDEX idx_subscriptions_email ON newsletter_subscriptions(email);
+CREATE INDEX idx_subscriptions_user_id ON newsletter_subscriptions(user_id);
+CREATE INDEX idx_subscriptions_status ON newsletter_subscriptions(status);
+CREATE INDEX idx_subscriptions_unsubscribe_token ON newsletter_subscriptions(unsubscribe_token);
 
 -- RLS
 ALTER TABLE newsletter_subscriptions ENABLE ROW LEVEL SECURITY

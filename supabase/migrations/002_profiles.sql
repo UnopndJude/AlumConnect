@@ -11,9 +11,9 @@ CREATE TABLE profiles (
 )
 
 -- Indexes
-CREATE INDEX idx_profiles_email ON profiles(email)
-CREATE INDEX idx_profiles_alumni_id ON profiles(alumni_id)
-CREATE INDEX idx_profiles_graduation_class ON profiles(graduation_class)
+CREATE INDEX idx_profiles_email ON profiles(email);
+CREATE INDEX idx_profiles_alumni_id ON profiles(alumni_id);
+CREATE INDEX idx_profiles_graduation_class ON profiles(graduation_class);
 
 -- RLS policies
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY
@@ -34,6 +34,6 @@ CREATE POLICY "Users can insert own profile" ON profiles
 CREATE POLICY "Service role full access" ON profiles
   FOR ALL USING (auth.role() = 'service_role')
 
--- Anyone can view basic profile info (for directory)
-CREATE POLICY "Public can view profiles" ON profiles
-  FOR SELECT USING (true)
+-- Authenticated users can view profiles
+CREATE POLICY "Authenticated users can view profiles" ON profiles
+  FOR SELECT USING (auth.uid() IS NOT NULL)

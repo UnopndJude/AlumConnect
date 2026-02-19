@@ -15,10 +15,10 @@ CREATE TABLE connections (
 )
 
 -- Indexes
-CREATE INDEX idx_connections_requester_id ON connections(requester_id)
-CREATE INDEX idx_connections_receiver_id ON connections(receiver_id)
-CREATE INDEX idx_connections_status ON connections(status)
-CREATE INDEX idx_connections_created_at ON connections(created_at DESC)
+CREATE INDEX idx_connections_requester_id ON connections(requester_id);
+CREATE INDEX idx_connections_receiver_id ON connections(receiver_id);
+CREATE INDEX idx_connections_status ON connections(status);
+CREATE INDEX idx_connections_created_at ON connections(created_at DESC);
 
 -- RLS
 ALTER TABLE connections ENABLE ROW LEVEL SECURITY

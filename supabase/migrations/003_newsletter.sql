@@ -26,9 +26,9 @@ CREATE TABLE newsletter_sections (
 )
 
 -- Indexes
-CREATE INDEX idx_newsletters_edition ON newsletters(edition)
-CREATE INDEX idx_newsletters_status ON newsletters(status)
-CREATE INDEX idx_newsletter_sections_newsletter_id ON newsletter_sections(newsletter_id)
+CREATE INDEX idx_newsletters_edition ON newsletters(edition);
+CREATE INDEX idx_newsletters_status ON newsletters(status);
+CREATE INDEX idx_newsletter_sections_newsletter_id ON newsletter_sections(newsletter_id);
 
 -- RLS
 ALTER TABLE newsletters ENABLE ROW LEVEL SECURITY

@@ -19,54 +19,40 @@ CREATE TABLE announcements (
 )
 
 -- Indexes
-CREATE INDEX idx_announcements_author_id ON announcements(author_id)
-CREATE INDEX idx_announcements_status ON announcements(status)
-CREATE INDEX idx_announcements_type ON announcements(type)
-CREATE INDEX idx_announcements_created_at ON announcements(created_at DESC)
+CREATE INDEX idx_announcements_author_id ON announcements(author_id);
+CREATE INDEX idx_announcements_status ON announcements(status);
+CREATE INDEX idx_announcements_type ON announcements(type);
+CREATE INDEX idx_announcements_created_at ON announcements(created_at DESC);
 
 -- RLS
 ALTER TABLE announcements ENABLE ROW LEVEL SECURITY
 
 -- Users can view their own announcements
 CREATE POLICY "Users can view own announcements" ON announcements
-  FOR SELECT USING (
-    auth.uid() IN (
-      SELECT user_id FROM profiles WHERE id = announcements.author_id
-    )
-  )
+  FOR SELECT USING (auth.uid() = author_id)
 
 -- Users can create announcements (linked to their profile)
 CREATE POLICY "Users can create announcements" ON announcements
-  FOR INSERT WITH CHECK (
-    auth.uid() IN (
-      SELECT user_id FROM profiles WHERE id = announcements.author_id
-    )
-  )
+  FOR INSERT WITH CHECK (auth.uid() = author_id)
 
 -- Users can update their own pending announcements
 CREATE POLICY "Users can update own pending announcements" ON announcements
   FOR UPDATE USING (
-    auth.uid() IN (
-      SELECT user_id FROM profiles WHERE id = announcements.author_id
-    )
+    auth.uid() = author_id
     AND status = 'pending'
   )
 
 -- Users can delete their own announcements
 CREATE POLICY "Users can delete own announcements" ON announcements
-  FOR DELETE USING (
-    auth.uid() IN (
-      SELECT user_id FROM profiles WHERE id = announcements.author_id
-    )
-  )
+  FOR DELETE USING (auth.uid() = author_id)
 
 -- Admins can view all announcements
 CREATE POLICY "Admins can view all announcements" ON announcements
   FOR SELECT USING (
     EXISTS (
       SELECT 1 FROM profiles
-      WHERE profiles.user_id = auth.uid()
-      AND profiles.role = 'admin'
+      WHERE profiles.id = auth.uid()
+      AND profiles.is_admin = true
     )
   )
 
@@ -75,8 +61,8 @@ CREATE POLICY "Admins can update all announcements" ON announcements
   FOR UPDATE USING (
     EXISTS (
       SELECT 1 FROM profiles
-      WHERE profiles.user_id = auth.uid()
-      AND profiles.role = 'admin'
+      WHERE profiles.id = auth.uid()
+      AND profiles.is_admin = true
     )
   )
 
