@@ -46,13 +46,7 @@ export async function POST(
   } catch (error) {
     console.error("Error rejecting announcement:", error)
     return NextResponse.json(
-      {
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to reject announcement.",
-      },
+      { success: false, message: "공지사항 거부 처리 중 오류가 발생했습니다." },
       { status: 500 }
     )
   }

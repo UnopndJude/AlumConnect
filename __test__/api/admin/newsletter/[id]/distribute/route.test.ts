@@ -344,8 +344,7 @@ describe("POST /api/admin/newsletter/[id]/distribute", () => {
 
     expect(response.status).toBe(500)
     expect(data.success).toBe(false)
-    expect(data.message).toContain("뉴스레터 배포에 실패했습니다")
-    expect(data.error).toContain("Email service error")
+    expect(data.message).toContain("뉴스레터 배포 중 오류가 발생했습니다")
   })
 
   it("should require admin auth", async () => {

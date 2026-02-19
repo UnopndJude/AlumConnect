@@ -26,7 +26,10 @@ export async function POST(request: NextRequest) {
     // Validate receiver is different from sender
     if (receiverId === authResult.auth.profile.id) {
       return NextResponse.json(
-        { success: false, message: "Cannot send connection request to yourself." },
+        {
+          success: false,
+          message: "Cannot send connection request to yourself.",
+        },
         { status: 400 }
       )
     }
@@ -35,7 +38,9 @@ export async function POST(request: NextRequest) {
     const profileRepository = container.getProfileRepository()
 
     // Validate receiver exists
-    const receiver = await profileRepository.findById(ProfileId.create(receiverId))
+    const receiver = await profileRepository.findById(
+      ProfileId.create(receiverId)
+    )
     if (!receiver) {
       return NextResponse.json(
         { success: false, message: "Receiver not found." },
@@ -50,7 +55,10 @@ export async function POST(request: NextRequest) {
     )
     if (existingConnection) {
       return NextResponse.json(
-        { success: false, message: "Connection already exists between these users." },
+        {
+          success: false,
+          message: "Connection already exists between these users.",
+        },
         { status: 409 }
       )
     }
@@ -72,13 +80,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error creating connection:", error)
     return NextResponse.json(
-      {
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to create connection request.",
-      },
+      { success: false, message: "연결 요청 처리 중 오류가 발생했습니다." },
       { status: 500 }
     )
   }

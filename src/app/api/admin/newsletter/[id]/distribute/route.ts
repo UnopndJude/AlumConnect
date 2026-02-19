@@ -54,8 +54,7 @@ export async function POST(
     }
 
     // Get base URL for unsubscribe links
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 
     // Generate email for each subscriber
     const messages: EmailMessage[] = subscribers.map((subscriber) => {
@@ -64,10 +63,10 @@ export async function POST(
         baseUrl,
       })
 
-      const text = generateNewsletterText(newsletter).replace(
-        "{unsubscribeUrl}",
-        `${baseUrl}/api/newsletter/unsubscribe?token=${subscriber.unsubscribeToken}`
-      )
+      const text = generateNewsletterText(newsletter, {
+        unsubscribeToken: subscriber.unsubscribeToken,
+        baseUrl,
+      })
 
       return {
         to: { email: subscriber.email },
@@ -89,11 +88,7 @@ export async function POST(
     console.error("Failed to distribute newsletter:", error)
 
     return NextResponse.json(
-      {
-        success: false,
-        message: "뉴스레터 배포에 실패했습니다.",
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
+      { success: false, message: "뉴스레터 배포 중 오류가 발생했습니다." },
       { status: 500 }
     )
   }

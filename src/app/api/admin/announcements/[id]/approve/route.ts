@@ -36,13 +36,7 @@ export async function POST(
   } catch (error) {
     console.error("Error approving announcement:", error)
     return NextResponse.json(
-      {
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to approve announcement.",
-      },
+      { success: false, message: "공지사항 승인 중 오류가 발생했습니다." },
       { status: 500 }
     )
   }
