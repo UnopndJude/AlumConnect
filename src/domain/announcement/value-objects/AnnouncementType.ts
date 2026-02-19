@@ -1,17 +1,13 @@
 export type AnnouncementType =
-  | "academic"
-  | "career"
-  | "event"
-  | "news"
-  | "other"
+  | "alumni_in_media"
+  | "member_announcements"
+  | "industry_trends"
 
 export class AnnouncementTypeVO {
   private static readonly VALID_TYPES: AnnouncementType[] = [
-    "academic",
-    "career",
-    "event",
-    "news",
-    "other",
+    "alumni_in_media",
+    "member_announcements",
+    "industry_trends",
   ]
 
   private constructor(private readonly value: AnnouncementType) {}

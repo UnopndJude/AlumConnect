@@ -27,13 +27,13 @@ export class Profile {
 
   static create(props: CreateProfileProps): Profile {
     return new Profile({
-      id: props.id || ProfileId.create(),
+      id: props.id ?? ProfileId.create(),
       email: props.email,
       name: props.name,
       graduationClass: props.graduationClass,
-      isVerified: props.isVerified || false,
-      isAdmin: props.isAdmin || false,
-      alumniId: props.alumniId || null,
+      isVerified: props.isVerified ?? false,
+      isAdmin: props.isAdmin ?? false,
+      alumniId: props.alumniId ?? null,
       createdAt: new Date(),
     })
   }
@@ -72,7 +72,7 @@ export class Profile {
   }
 
   get createdAt(): Date {
-    return this.props.createdAt
+    return new Date(this.props.createdAt.getTime())
   }
 
   // Domain Methods

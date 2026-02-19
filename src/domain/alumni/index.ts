@@ -1,0 +1,5 @@
+export * from "./entities/Alumni"
+export * from "./entities/AlumniMatchResult"
+export * from "./repositories/IAlumniRepository"
+export * from "./services/AlumniMatchingService"
+export * from "./value-objects"

@@ -32,7 +32,7 @@ export class Subscription {
     return new Subscription({
       id: crypto.randomUUID(),
       email,
-      userId: userId || null,
+      userId: userId ?? null,
       status: "active",
       preferences: { ...defaultPreferences },
       subscribedAt: new Date(),
@@ -65,10 +65,12 @@ export class Subscription {
     return this.props.preferences
   }
   get subscribedAt(): Date {
-    return this.props.subscribedAt
+    return new Date(this.props.subscribedAt.getTime())
   }
   get unsubscribedAt(): Date | null {
     return this.props.unsubscribedAt
+      ? new Date(this.props.unsubscribedAt.getTime())
+      : null
   }
   get unsubscribeToken(): string {
     return this.props.unsubscribeToken

@@ -36,7 +36,12 @@ export class Announcement {
   static create(
     props: Omit<
       AnnouncementProps,
-      "id" | "status" | "reviewedBy" | "reviewedAt" | "rejectionReason" | "createdAt"
+      | "id"
+      | "status"
+      | "reviewedBy"
+      | "reviewedAt"
+      | "rejectionReason"
+      | "createdAt"
     >
   ): Announcement {
     return new Announcement({
@@ -84,6 +89,8 @@ export class Announcement {
 
   get reviewedAt(): Date | null {
     return this.props.reviewedAt
+      ? new Date(this.props.reviewedAt.getTime())
+      : null
   }
 
   get rejectionReason(): string | null {
@@ -91,7 +98,7 @@ export class Announcement {
   }
 
   get createdAt(): Date {
-    return this.props.createdAt
+    return new Date(this.props.createdAt.getTime())
   }
 
   get isPending(): boolean {
