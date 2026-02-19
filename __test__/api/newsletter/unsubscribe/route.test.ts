@@ -81,7 +81,8 @@ describe("/api/newsletter/unsubscribe - GET", () => {
     const data = await response.json()
 
     expect(response.status).toBe(400)
-    expect(data.error).toBe("Unsubscribe token is required")
+    expect(data.success).toBe(false)
+    expect(data.message).toBe("Unsubscribe token is required")
     expect(
       mockSubscriptionRepository.findByUnsubscribeToken
     ).not.toHaveBeenCalled()
@@ -96,7 +97,8 @@ describe("/api/newsletter/unsubscribe - GET", () => {
     const data = await response.json()
 
     expect(response.status).toBe(404)
-    expect(data.error).toBe("Invalid or expired unsubscribe link")
+    expect(data.success).toBe(false)
+    expect(data.message).toBe("Invalid or expired unsubscribe link")
     expect(mockSubscriptionRepository.save).not.toHaveBeenCalled()
   })
 
@@ -110,6 +112,7 @@ describe("/api/newsletter/unsubscribe - GET", () => {
     const data = await response.json()
 
     expect(response.status).toBe(500)
-    expect(data.error).toBe("Failed to unsubscribe from newsletter")
+    expect(data.success).toBe(false)
+    expect(data.message).toBe("Failed to unsubscribe from newsletter")
   })
 })

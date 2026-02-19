@@ -92,7 +92,8 @@ describe("/api/newsletter/subscribe - POST", () => {
     const data = await response.json()
 
     expect(response.status).toBe(400)
-    expect(data.error).toBe("Email is required")
+    expect(data.success).toBe(false)
+    expect(data.message).toBe("Email is required")
     expect(mockSubscriptionRepository.findByEmail).not.toHaveBeenCalled()
   })
 
@@ -102,7 +103,8 @@ describe("/api/newsletter/subscribe - POST", () => {
     const data = await response.json()
 
     expect(response.status).toBe(400)
-    expect(data.error).toBe("Invalid email format")
+    expect(data.success).toBe(false)
+    expect(data.message).toBe("Invalid email format")
     expect(mockSubscriptionRepository.findByEmail).not.toHaveBeenCalled()
   })
 
@@ -112,7 +114,8 @@ describe("/api/newsletter/subscribe - POST", () => {
     const data = await response.json()
 
     expect(response.status).toBe(400)
-    expect(data.error).toBe("Email is required")
+    expect(data.success).toBe(false)
+    expect(data.message).toBe("Email is required")
   })
 
   it("should handle server errors", async () => {
@@ -125,6 +128,7 @@ describe("/api/newsletter/subscribe - POST", () => {
     const data = await response.json()
 
     expect(response.status).toBe(500)
-    expect(data.error).toBe("Failed to subscribe to newsletter")
+    expect(data.success).toBe(false)
+    expect(data.message).toBe("Failed to subscribe to newsletter")
   })
 })

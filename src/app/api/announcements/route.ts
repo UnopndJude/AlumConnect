@@ -59,13 +59,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error creating announcement:", error)
     return NextResponse.json(
-      {
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to create announcement.",
-      },
+      { success: false, message: "공지사항 생성 중 오류가 발생했습니다." },
       { status: 500 }
     )
   }
@@ -79,8 +73,15 @@ export async function GET() {
 
   try {
     const announcementRepository = container.getAnnouncementRepository()
+    if (!authResult.auth.profile) {
+      return NextResponse.json(
+        { success: false, message: "Profile not found." },
+        { status: 404 }
+      )
+    }
+
     const announcements = await announcementRepository.findByAuthorId(
-      authResult.auth.profile?.id || ""
+      authResult.auth.profile.id
     )
 
     return NextResponse.json({

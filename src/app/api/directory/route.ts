@@ -19,8 +19,15 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const name = searchParams.get("q")
     const graduationClass = searchParams.get("graduationClass")
-    const page = parseInt(searchParams.get("page") || "1", 10)
-    const limit = parseInt(searchParams.get("limit") || "20", 10)
+    const rawPage = parseInt(searchParams.get("page") || "1", 10)
+    const rawLimit = parseInt(searchParams.get("limit") || "20", 10)
+    const page = Number.isNaN(rawPage) || rawPage < 1 ? 1 : rawPage
+    const limit =
+      Number.isNaN(rawLimit) || rawLimit < 1
+        ? 20
+        : rawLimit > 100
+          ? 100
+          : rawLimit
 
     const profileRepository = container.getProfileRepository()
 

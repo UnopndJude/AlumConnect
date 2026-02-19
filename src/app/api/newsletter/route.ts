@@ -4,11 +4,18 @@ import { container } from "@/infrastructure/di/container"
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const page = parseInt(searchParams.get("page") || "1", 10)
-    const limit = parseInt(searchParams.get("limit") || "10", 10)
+    const rawPage = parseInt(searchParams.get("page") || "1", 10)
+    const rawLimit = parseInt(searchParams.get("limit") || "10", 10)
+    const page = rawPage
+    const limit = rawLimit
 
-    // Validate pagination parameters
-    if (page < 1 || limit < 1 || limit > 100) {
+    if (
+      Number.isNaN(page) ||
+      Number.isNaN(limit) ||
+      page < 1 ||
+      limit < 1 ||
+      limit > 100
+    ) {
       return NextResponse.json(
         {
           success: false,
