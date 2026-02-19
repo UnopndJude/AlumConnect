@@ -218,4 +218,42 @@ describe("/api/verify/quiz POST", () => {
     expect(data.verified).toBe(true)
     expect(data.passed).toBe(true)
   })
+
+  it("should return 500 on internal server error", async () => {
+    const mockSupabase = {
+      auth: {
+        getSession: vi.fn().mockResolvedValue({
+          data: {
+            session: { user: { id: "test-user-id", email: "test@test.com" } },
+          },
+        }),
+      },
+      from: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({
+        data: { id: "test-user-id", is_verified: false },
+      }),
+    }
+    vi.mocked(createServerClient).mockResolvedValue(mockSupabase as any)
+
+    vi.mocked(container.getQuizSessionRepository).mockImplementation(() => {
+      throw new Error("Repository unavailable")
+    })
+
+    const request = new NextRequest("http://localhost/api/verify/quiz", {
+      method: "POST",
+      body: JSON.stringify({
+        sessionId: "test-session",
+        answers: [0, 0, 0, 0, 0],
+      }),
+    })
+
+    const response = await POST(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(500)
+    expect(data.success).toBe(false)
+    expect(data.message).toBe("서버 오류가 발생했습니다.")
+  })
 })
