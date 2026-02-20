@@ -10,6 +10,26 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     css: true,
     exclude: ["e2e/**", "node_modules/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "text-summary", "html", "lcov"],
+      reportsDirectory: "./coverage",
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: [
+        "src/**/*.d.ts",
+        "src/**/*.test.{ts,tsx}",
+        "src/**/index.ts",
+        "src/app/**/layout.tsx",
+        "src/app/**/loading.tsx",
+        "src/app/**/error.tsx",
+      ],
+      thresholds: {
+        statements: 25,
+        branches: 25,
+        functions: 25,
+        lines: 25,
+      },
+    },
   },
   resolve: {
     alias: {
